@@ -3,13 +3,14 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BookHeart, Dumbbell, Flame, Lock, Play } from 'lucide-react';
-import { db, getOrCreateProfile, PROFILE_ID, streakAlive } from '@/lib/db';
-import { LEVELS, currentStepId, findLesson, isLessonUnlocked, isStepDone } from '@/lib/content/syllabus';
+import { BookHeart, Dumbbell, Flame, Lock } from 'lucide-react';
+import { db, getOrCreateProfile, PROFILE_ID, streakAlive, updateProfile } from '@/lib/db';
+import { useReducedMotion } from '@/lib/motion';
+import { findLesson } from '@/lib/content/syllabus';
+import { HOME_GAMES, pickLesson } from '@/lib/content/games';
 import { RoundButton } from '@/components/ui';
 import { BrandHeader, DevCredit } from '@/components/BrandHeader';
-import { Mascot } from '@/components/Mascot';
-import { ReadingRoad } from '@/components/ReadingRoad';
+import { PlayCarousel } from '@/components/PlayCarousel';
 import { AvatarPicker } from '@/components/AvatarPicker';
 import { OfflinePill } from '@/components/OfflinePill';
 import { InstallSheet } from '@/components/InstallSheet';
@@ -20,6 +21,7 @@ export default function Home() {
   const profile = useLiveQuery(() => db.profiles.get(PROFILE_ID));
   const progress = useLiveQuery(() => db.progress.toArray());
   const recent = useLiveQuery(() => db.attempts.orderBy('at').reverse().limit(30).toArray());
+  const reduced = useReducedMotion();
   const [ready, setReady] = useState(false);
   const [picking, setPicking] = useState(false);
   const [justFinished, setJustFinished] = useState(false); // install sheet only after a completed lesson
@@ -31,23 +33,16 @@ export default function Home() {
 
   if (!ready || !profile || !progress || !recent || needsPlacement) return null;
   // The current step is derived from progress: the first step not yet finished (steps below startStep count as skipped).
-  const start = profile.startStep ?? 1;
-  const stepId = currentStepId(progress, start);
-  const step = LEVELS.find((l) => l.id === stepId)!;
   const totalStars = progress.reduce((n, p) => n + p.bestStars, 0);
-  // Play always resumes the first open lesson of the current step.
-  const nextLesson = step.lessons.find((l) => (progress.find((p) => p.lessonId === l.id)?.bestStars ?? 0) === 0 && isLessonUnlocked(progress, l.id, start));
-  const playHref = nextLesson ? `/play/?lesson=${nextLesson.id}` : `/level/?id=${step.id}`;
-  const allDone = LEVELS.every((l) => isStepDone(progress, l, start));
   const streak = streakAlive(profile) ? profile.streak ?? 0 : 0;
 
-  // "Practice": the unlocked lesson the child missed the most in their last 30 plays.
+  // "Practice": the lesson the child missed the most in their last 30 plays.
   const missesByLesson = recent.reduce<Record<string, number>>((m, a) => ((m[a.lessonId] = (m[a.lessonId] ?? 0) + a.misses.length), m), {});
-  const practiceId = Object.entries(missesByLesson).filter(([id, n]) => n > 0 && isLessonUnlocked(progress, id, start)).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const practiceId = Object.entries(missesByLesson).filter(([id, n]) => n > 0).sort((a, b) => b[1] - a[1])[0]?.[0];
   const practice = practiceId ? findLesson(practiceId) : undefined;
 
   return (
-    <div className="flex flex-col items-center gap-4 pt-4 pb-56">
+    <div className="flex flex-col items-center gap-3 pt-4 h-dvh overflow-hidden">
       <header className="w-full flex items-center justify-between h-28">
         <RoundButton onClick={() => setPicking(true)} ariaLabel="Change avatar" color="card" className="text-5xl"><span aria-hidden>{profile.avatar}</span></RoundButton>
         <BrandHeader />
@@ -62,17 +57,10 @@ export default function Home() {
         )}
       </div>
 
-      <ReadingRoad progress={progress} start={start} avatar={profile.avatar} allDone={allDone} />
-
-      <div className="fixed bottom-0 inset-x-0 z-30 pointer-events-none">
-        <div className="relative max-w-2xl md:max-w-4xl mx-auto px-4 pb-4 pt-10 bg-gradient-to-t from-paper via-paper/90 to-transparent">
-          <div className="flex items-end justify-between pointer-events-auto">
-            <Mascot size={96} mood="cheer" hat={equippedHat(profile.wardrobe?.equipped, totalStars)} say="Let's read!" />
-            <RoundButton href={playHref} ariaLabel="Play" color="sun" label="Play"><Play className="w-10 h-10 fill-ink" strokeWidth={3} /></RoundButton>
-          </div>
-          <div className="text-center pt-2"><DevCredit /></div>
-        </div>
-      </div>
+      <PlayCarousel games={HOME_GAMES} progress={progress} startIndex={profile.homeIndex ?? 0} hat={equippedHat(profile.wardrobe?.equipped, totalStars)} reduced={reduced}
+        onIndexChange={(i) => updateProfile({ homeIndex: i })}
+        onPlay={(g) => { const l = pickLesson(g, progress); if (l) router.push(`/play/?lesson=${l.id}`); }} />
+      <div className="text-center pb-2"><DevCredit /></div>
       <GrownupsLock />
       <InstallSheet eligible={justFinished} lastShown={profile.installPromptLastShown} />
       {picking && <AvatarPicker current={profile.avatar} onClose={() => setPicking(false)} />}
@@ -83,7 +71,7 @@ export default function Home() {
 /** Grown-ups lock: intentionally small (52px) and low contrast so children do not wander in. */
 function GrownupsLock() {
   return (
-    <Link href="/grownups/" aria-label="Grown-ups area" className="fixed right-4 bottom-[150px] z-30 w-[52px] h-[52px] rounded-full border-[3px] border-ink/30 bg-card/60 flex items-center justify-center text-ink/40">
+    <Link href="/grownups/" aria-label="Grown-ups area" className="fixed right-4 bottom-8 z-30 w-[52px] h-[52px] rounded-full border-[3px] border-ink/30 bg-card/60 flex items-center justify-center text-ink/40">
       <Lock className="w-6 h-6" strokeWidth={2.5} />
     </Link>
   );

@@ -1,6 +1,6 @@
 // Offline-first service worker. Pages: network-first with cache fallback.
 // Static assets (/_next/static, fonts, icons, audio): cache-first.
-const VERSION = 'rf-v4';
+const VERSION = 'rf-v5';
 const SHELL = ['/', '/level/', '/play/', '/grownups/', '/placement/', '/stickers/', '/challenge/', '/manifest.json', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (e) => {

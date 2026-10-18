@@ -2,8 +2,9 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { ArrowRight, BookHeart, Home, Map as MapIcon, Plus, RotateCcw } from 'lucide-react';
-import { LEVELS, findLesson, isLessonUnlocked, isStepDone, levelOfLesson } from '@/lib/content/syllabus';
+import { ArrowRight, BookHeart, Home, Plus, RotateCcw } from 'lucide-react';
+import { findLesson, isStepDone, levelOfLesson } from '@/lib/content/syllabus';
+import { gameOfLesson, pickLesson } from '@/lib/content/games';
 import { buildQuestions, starsFor, shuffle } from '@/lib/engine';
 import { db, PROFILE_ID, recordAttempt } from '@/lib/db';
 import { pushPending } from '@/lib/sync';
@@ -26,10 +27,10 @@ function PlayInner() {
   const stories = useMemo(() => (lesson?.stories ? shuffle(lesson.stories).slice(0, lesson.rounds ?? 2) : []), [lesson, seed]); // eslint-disable-line react-hooks/exhaustive-deps
   const total = lesson?.game === 'story' ? stories.length : questions.length;
 
-  // Locked lessons typed into the URL go home.
+  // Unknown lessons typed into the URL go home.
   const progress = useLiveQuery(() => db.progress.toArray());
   const start = profile?.startStep ?? 1;
-  const allowed = !!lesson && !!progress && !!profile && isLessonUnlocked(progress, lesson.id, start);
+  const allowed = !!lesson && !!progress && !!profile && true; // free play: every lesson is open
   useEffect(() => { if (progress && profile && !allowed) router.replace('/'); }, [progress, profile, allowed, router]);
   const stepDoneAtStart = useRef<boolean | null>(null);
   if (progress && profile && level && stepDoneAtStart.current === null) stepDoneAtStart.current = isStepDone(progress, level, start);
@@ -73,7 +74,8 @@ function PlayInner() {
     const stars = starsFor(total - firstTryMisses, total, firstTryMisses);
     // Step just completed by this play (progress is live, so this flips once the save lands)
     const stepJustDone = !stepDoneAtStart.current && isStepDone(progress, level, start);
-    const nextStep = LEVELS.find((l) => l.id === level.id + 1);
+    const game = gameOfLesson(lesson);
+    const nextLesson = game ? pickLesson(game, progress, lesson.id) : undefined;
     const totalStars = progress.reduce((n, p) => n + p.bestStars, 0);
     const again = () => { setSeed((s) => s + 1); setI(0); setMisses([]); setFirstTryMisses(0); setNewSticker(false); setFinished(false); setMissed(false); started.current = Date.now(); };
     // sides 92px tilted, centre 120px; they fly in 180ms apart
@@ -98,12 +100,12 @@ function PlayInner() {
             </span>
           </div>
         )}
-        {stepJustDone && <span aria-label="Step done" className="text-6xl animate-bounceIn">{nextStep ? '🗺️' : '🏆'}</span>}
+        {stepJustDone && <span aria-label="Step done" className="text-6xl animate-bounceIn">🏆</span>}
         <Mascot size={140} mood="dance" hat={stars === 3 ? 'crown' : equippedHat(profile?.wardrobe?.equipped, totalStars)} />
         <div className="flex items-center justify-center gap-5 w-full pt-2">
           <RoundButton onClick={again} ariaLabel="Play again" color="tangerine"><RotateCcw className="w-9 h-9" strokeWidth={3} /></RoundButton>
-          <RoundButton href="/" ariaLabel="Map" color="sky"><MapIcon className="w-9 h-9" strokeWidth={3} /></RoundButton>
-          <RoundButton onClick={() => router.push(stepJustDone ? (nextStep ? `/level/?id=${nextStep.id}` : '/') : `/level/?id=${level.id}`)} ariaLabel="Next" color="grass" size="lg"><ArrowRight className="w-12 h-12" strokeWidth={3} /></RoundButton>
+          <RoundButton href="/" ariaLabel="Home" color="sky"><Home className="w-9 h-9" strokeWidth={3} /></RoundButton>
+          <RoundButton onClick={() => router.push(nextLesson ? `/play/?lesson=${nextLesson.id}` : '/')} ariaLabel="Next" color="grass" size="lg"><ArrowRight className="w-12 h-12" strokeWidth={3} /></RoundButton>
         </div>
       </div>
     );
@@ -113,7 +115,7 @@ function PlayInner() {
   const key = `${seed}-${i}`;
   return (
     <div className="flex flex-col gap-4 min-h-[100dvh]">
-      <PlayBar total={total} done={i} current={i} homeHref={`/level/?id=${level.id}`}
+      <PlayBar total={total} done={i} current={i} homeHref="/"
         onReplay={lesson.game === 'story' ? undefined : () => window.dispatchEvent(new Event('pp-replay'))} missed={missed} />
 
       <section className="flex-1 flex flex-col justify-center py-6" key={key}>

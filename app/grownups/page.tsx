@@ -9,6 +9,7 @@ import { THEMES, applyTheme, DEFAULT_THEME } from '@/lib/themes';
 import { applyReducedMotion } from '@/lib/motion';
 import { AVATARS } from '@/components/AvatarPicker';
 import { speak } from '@/lib/speech';
+import { InstallHelp } from '@/components/InstallHelp';
 import { pushPending, SYNC_URL } from '@/lib/sync';
 
 // Grown-ups area: deliberately calm and neutral (not the sticker-board look) so it reads as "not for me" to a child.
@@ -90,7 +91,7 @@ export default function Grownups() {
           ))}
         </div>
         <p className="flex items-center justify-between">Current step <strong>{stepId}. {LEVELS.find((l) => l.id === stepId)?.name}</strong></p>
-        <p className="text-[#6B6760]">The child opens the next step by finishing every lesson in the current one (1 star is enough). Earlier steps stay open to replay.</p>
+        <p className="text-[#6B6760]">The home screen is free play: every game is open and stars only show progress. The current step is the first one not yet finished.</p>
       </section>
 
       <div className="grid grid-cols-3 gap-3">
@@ -100,6 +101,11 @@ export default function Grownups() {
           </div>
         ))}
       </div>
+
+      <section className={card}>
+        <h2 className="font-ui font-semibold text-lg">Install on a phone</h2>
+        <InstallHelp showQr />
+      </section>
 
       <section className={card}>
         <h2 className="font-ui font-semibold text-lg">Settings</h2>

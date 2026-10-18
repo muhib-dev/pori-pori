@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { type CSSProperties, type ReactNode } from 'react';
-import { ArrowLeft, Check, House, RotateCcw, Sparkles } from 'lucide-react';
+import { ArrowLeft, Check, House, Play, RotateCcw, Sparkles } from 'lucide-react';
 
 const colorBg: Record<string, string> = {
   sun: 'bg-sun', tangerine: 'bg-tangerine', grass: 'bg-grass', berry: 'bg-berry',
@@ -108,37 +108,48 @@ export function TopBar({ backHref, children }: { backHref: string; children?: Re
   );
 }
 
-/** Three white puffs on a locked node's bottom edge */
-function CloudCap() {
+/** Free-play carousel card: art on the game's colour, name, stars, ▶ Play. The pill is decorative; the whole card is the button. */
+export function GameCard({ name, emoji, color, stars, isNew, onClick, active, className = '', style }: {
+  name: string; emoji: ReactNode; color: keyof typeof colorBg; stars: number; isNew?: boolean;
+  onClick: () => void; active: boolean; className?: string; style?: CSSProperties;
+}) {
   return (
-    <span aria-hidden className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-end gap-0.5 pointer-events-none">
-      <span className="w-5 h-5 rounded-full bg-card border-2 border-ink/20" />
-      <span className="w-7 h-7 rounded-full bg-card border-2 border-ink/20 -mx-1" />
-      <span className="w-5 h-5 rounded-full bg-card border-2 border-ink/20" />
-    </span>
+    <button type="button" onClick={onClick} aria-label={active ? `Play ${name}` : name} tabIndex={active ? 0 : -1}
+      className={`flex flex-col items-center w-[260px] h-[384px] bg-card border-[5px] border-ink rounded-[38px] shadow-[0_9px_0_0_rgb(var(--c-ink))] overflow-hidden ${className}`} style={style}>
+      <span className={`relative w-full h-[206px] border-b-[5px] border-ink flex items-center justify-center text-[112px] leading-none ${colorBg[color]}`} aria-hidden>
+        {emoji}
+        {isNew && <span className="absolute right-3.5 top-3.5 bg-bubblegum border-[3px] border-ink rounded-full px-3 py-1 font-ui font-bold text-base leading-none rotate-[8deg]">NEW</span>}
+      </span>
+      <span className="font-ui font-bold text-[34px] leading-none mt-4">{name}</span>
+      <span className="mt-2.5"><Stars n={stars} size="text-2xl" /></span>
+      <span aria-hidden className="mt-auto mb-[18px] flex items-center gap-2 h-[58px] pl-5 pr-[26px] rounded-full bg-sun border-4 border-ink shadow-tileSm font-ui font-bold text-2xl leading-none">
+        <Play className="w-6 h-6 fill-ink" strokeWidth={3} />Play
+      </span>
+    </button>
   );
 }
 
-/** Reading Road landmark. done: 84px coloured + stars below. next: 100px card, glow, avatar above, label pill. locked: 84px dashed, greyed picture, cloud cap. */
-export function MapNode({ id, state, emoji, label, stars, avatar, color = 'sun', href, onClick, ariaLabel, className = '', style }: {
-  id?: string;
-  state: 'done' | 'next' | 'locked'; emoji: ReactNode; label?: string; stars?: ReactNode; avatar?: ReactNode;
-  color?: keyof typeof colorBg; href?: string; onClick?: () => void; ariaLabel: string; className?: string; style?: CSSProperties;
-}) {
-  const size = state === 'next' ? 'w-[100px] h-[100px] !border-[5px] animate-ring' : 'w-[84px] h-[84px]';
-  const look = state === 'done' ? colorBg[color] : state === 'next' ? 'bg-card' : 'bg-card !border-dashed !border-ink/35 !shadow-none';
-  const cls = `tile relative ${size} ${look} !rounded-full flex items-center justify-center text-5xl`;
-  const pic = <span className={state === 'locked' ? 'grayscale opacity-30' : ''}>{emoji}</span>;
-  const inner = <>{pic}{state === 'locked' && <CloudCap />}</>;
+/** One dot per game; active = 30px sun pill, others 14px. Tap to jump. */
+export function CarouselDots({ total, current, onSelect }: { total: number; current: number; onSelect: (i: number) => void }) {
   return (
-    <div id={id} className={`absolute flex flex-col items-center -translate-x-1/2 -translate-y-1/2 ${className}`} style={style}>
-      {state === 'next' && avatar && <span className="absolute -top-12 text-5xl animate-float" aria-hidden>{avatar}</span>}
-      {href
-        ? <Link href={href} aria-label={ariaLabel} className={cls}>{inner}</Link>
-        : <button type="button" onClick={onClick} aria-label={ariaLabel} className={cls}>{inner}</button>}
-      {state === 'done' && stars && <div className="mt-2">{stars}</div>}
-      {state === 'next' && label && <span className="mt-2 px-4 py-0.5 rounded-full bg-card border-[3px] border-ink font-ui font-semibold text-lg">{label}</span>}
+    <div className="flex items-center gap-[7px]" role="tablist" aria-label="Games">
+      {Array.from({ length: total }, (_, i) => (
+        <button key={i} type="button" role="tab" aria-selected={i === current} aria-label={`Game ${i + 1}`} onClick={() => onSelect(i)}
+          className="p-2 -m-2 flex items-center">
+          <span className={`block h-3.5 rounded-full border-[2.5px] border-ink transition-[width] duration-[250ms] ${i === current ? 'w-[30px] bg-sun' : 'w-3.5 bg-card'}`} />
+        </button>
+      ))}
     </div>
+  );
+}
+
+/** Berry pill (84px) next to Bulbul. The dice turns 720° on every press. */
+export function SurpriseButton({ onClick, turns, disabled, reduced }: { onClick: () => void; turns: number; disabled?: boolean; reduced?: boolean }) {
+  return (
+    <button type="button" onClick={onClick} disabled={disabled} aria-label="Surprise! Pick a game for me"
+      className="flex-1 flex items-center justify-center gap-2.5 h-[84px] rounded-full bg-berry text-white border-[5px] border-ink shadow-[0_7px_0_0_rgb(var(--c-ink))] font-ui font-bold text-[25px] leading-none active:translate-y-[5px] active:shadow-[0_2px_0_0_rgb(var(--c-ink))] transition-[transform,box-shadow] duration-100 focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-sun">
+      <span aria-hidden className="inline-block text-[38px]" style={{ transform: `rotate(${turns * 720}deg)`, transition: reduced ? 'none' : 'transform 1.1s cubic-bezier(.2,.9,.3,1)' }}>🎲</span>Surprise!
+    </button>
   );
 }
 

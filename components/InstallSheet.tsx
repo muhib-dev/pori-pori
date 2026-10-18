@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Plus } from 'lucide-react';
 import { updateProfile } from '@/lib/db';
 import { RoundButton } from './ui';
+import { InstallHelp, detectPlatform, isStandalone } from './InstallHelp';
 
 interface InstallEvent extends Event { prompt(): Promise<void> }
 const WEEK = 7 * 24 * 3600 * 1000;
@@ -17,9 +18,12 @@ export function InstallSheet({ eligible, lastShown }: { eligible: boolean; lastS
     window.addEventListener('beforeinstallprompt', on);
     return () => window.removeEventListener('beforeinstallprompt', on);
   }, []);
+  // iOS never fires beforeinstallprompt, so it is shown the manual steps instead
+  const [ios, setIos] = useState(false);
+  useEffect(() => { setIos(detectPlatform() === 'ios' && !isStandalone()); }, []);
   useEffect(() => {
-    if (ready && eligible && Date.now() - (lastShown ?? 0) > WEEK) { setOpen(true); updateProfile({ installPromptLastShown: Date.now() }); }
-  }, [ready, eligible, lastShown]);
+    if ((ready || ios) && eligible && Date.now() - (lastShown ?? 0) > WEEK) { setOpen(true); updateProfile({ installPromptLastShown: Date.now() }); }
+  }, [ready, ios, eligible, lastShown]);
   if (!open) return null;
   const add = async () => { await ev.current?.prompt(); setOpen(false); };
   return (
@@ -29,9 +33,10 @@ export function InstallSheet({ eligible, lastShown }: { eligible: boolean; lastS
           <span className="text-6xl">🏠</span><span className="text-4xl">←</span>
           <span className="w-20 h-20 rounded-tile bg-sun border-4 border-ink shadow-tileSm flex items-center justify-center font-bn font-extrabold text-5xl">প</span>
         </div>
+        <InstallHelp />
         <div className="flex gap-6">
           <RoundButton onClick={() => setOpen(false)} ariaLabel="Later" color="sky"><ChevronDown className="w-9 h-9" strokeWidth={3} /></RoundButton>
-          <RoundButton onClick={add} ariaLabel="Add to home screen" color="grass" label="Add"><Plus className="w-9 h-9" strokeWidth={4} /></RoundButton>
+          {ready && <RoundButton onClick={add} ariaLabel="Add to home screen" color="grass" label="Add"><Plus className="w-9 h-9" strokeWidth={4} /></RoundButton>}
         </div>
       </div>
     </div>
