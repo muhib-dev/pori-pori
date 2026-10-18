@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>@keyframes mbob{0%,100%{transform:translateY(0) rotate(var(--mt,0deg))}50%{transform:translateY(-6%) rotate(var(--mt,0deg))}}@keyframes mdance{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) translateY(-6%)}}@keyframes mzz{0%{opacity:0;transform:translate(0,0)}50%{opacity:1}100%{opacity:0;transform:translate(30%,-60%)}}</style></helmet>
+<div style="position:relative;width:{{ px }};height:{{ px }};flex:none;--mt:{{ tilt }};transform:rotate({{ tilt }});animation:{{ anim }}">
+  <div style="position:absolute;left:30%;top:86%;width:16%;height:9%;background:var(--tangerine,#FF8B3D);border:{{ bw }} solid var(--ink,#2B2340);border-radius:50%"></div>
+  <div style="position:absolute;left:54%;top:86%;width:16%;height:9%;background:var(--tangerine,#FF8B3D);border:{{ bw }} solid var(--ink,#2B2340);border-radius:50%"></div>
+  <sc-if value="{{ wingsUp }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0%;top:24%;width:24%;height:34%;background:var(--tangerine,#FF8B3D);border:{{ bw }} solid var(--ink,#2B2340);border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;transform:rotate(-35deg)"></div>
+    <div style="position:absolute;right:0%;top:24%;width:24%;height:34%;background:var(--tangerine,#FF8B3D);border:{{ bw }} solid var(--ink,#2B2340);border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;transform:rotate(35deg)"></div>
+  </sc-if>
+  <sc-if value="{{ wingsDown }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:4%;top:50%;width:20%;height:30%;background:var(--tangerine,#FF8B3D);border:{{ bw }} solid var(--ink,#2B2340);border-radius:50%;transform:rotate(20deg)"></div>
+    <div style="position:absolute;right:4%;top:50%;width:20%;height:30%;background:var(--tangerine,#FF8B3D);border:{{ bw }} solid var(--ink,#2B2340);border-radius:50%;transform:rotate(-20deg)"></div>
+  </sc-if>
+  <div style="position:absolute;left:40%;top:6%;width:9%;height:16%;background:var(--tangerine,#FF8B3D);border:{{ bw }} solid var(--ink,#2B2340);border-radius:50%;transform:rotate(-18deg)"></div>
+  <div style="position:absolute;left:50%;top:4%;width:9%;height:18%;background:var(--bubblegum,#FF6FAE);border:{{ bw }} solid var(--ink,#2B2340);border-radius:50%;transform:rotate(14deg)"></div>
+  <div style="position:absolute;left:13%;top:16%;width:74%;height:74%;background:var(--sun,#FFC93C);border:{{ bw }} solid var(--ink,#2B2340);border-radius:50% 50% 46% 46%;box-shadow:inset -8% -8% 0 rgba(0,0,0,.06)"></div>
+  <div style="position:absolute;left:30%;top:52%;width:40%;height:34%;background:rgba(255,255,255,.55);border-radius:50%"></div>
+  <div style="position:absolute;left:31%;top:31%;width:13%;height:4%;background:rgba(43,35,64,.0)"></div>
+  <sc-if value="{{ eyesOpen }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:27%;top:32%;width:17%;height:19%;background:#fff;border:{{ bw }} solid var(--ink,#2B2340);border-radius:50%"><div style="position:absolute;left:{{ pupilL }};top:28%;width:48%;height:48%;background:var(--ink,#2B2340);border-radius:50%"><div style="position:absolute;left:18%;top:14%;width:34%;height:34%;background:#fff;border-radius:50%"></div></div></div>
+    <div style="position:absolute;left:56%;top:32%;width:17%;height:19%;background:#fff;border:{{ bw }} solid var(--ink,#2B2340);border-radius:50%"><div style="position:absolute;left:{{ pupilL }};top:28%;width:48%;height:48%;background:var(--ink,#2B2340);border-radius:50%"><div style="position:absolute;left:18%;top:14%;width:34%;height:34%;background:#fff;border-radius:50%"></div></div></div>
+  </sc-if>
+  <sc-if value="{{ eyesHappy }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:28%;top:36%;width:15%;height:12%;border-top:{{ bw2 }} solid var(--ink,#2B2340);border-radius:50% 50% 0 0"></div>
+    <div style="position:absolute;left:57%;top:36%;width:15%;height:12%;border-top:{{ bw2 }} solid var(--ink,#2B2340);border-radius:50% 50% 0 0"></div>
+  </sc-if>
+  <sc-if value="{{ eyesClosed }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:28%;top:34%;width:15%;height:8%;border-bottom:{{ bw2 }} solid var(--ink,#2B2340);border-radius:0 0 50% 50%"></div>
+    <div style="position:absolute;left:57%;top:34%;width:15%;height:8%;border-bottom:{{ bw2 }} solid var(--ink,#2B2340);border-radius:0 0 50% 50%"></div>
+  </sc-if>
+  <div style="position:absolute;left:21%;top:52%;width:12%;height:8%;background:var(--bubblegum,#FF6FAE);opacity:.75;border-radius:50%"></div>
+  <div style="position:absolute;left:67%;top:52%;width:12%;height:8%;background:var(--bubblegum,#FF6FAE);opacity:.75;border-radius:50%"></div>
+  <div style="position:absolute;left:43%;top:50%;width:14%;height:{{ beakH }};background:var(--tangerine,#FF8B3D);border:{{ bw }} solid var(--ink,#2B2340);border-radius:20% 20% 50% 50%"></div>
+  <sc-if value="{{ showZ }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:-6%;top:-4%;font:700 {{ zf }}/1 Fredoka,sans-serif;color:var(--berry,#9B5DE5);animation:mzz 2.4s ease-in-out infinite">z</div>
+    <div style="position:absolute;right:8%;top:8%;font:700 {{ zf2 }}/1 Fredoka,sans-serif;color:var(--berry,#9B5DE5);animation:mzz 2.4s 1.2s ease-in-out infinite">z</div>
+  </sc-if>
+  <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:-10%;top:2%;font:700 {{ zf }}/1 Fredoka,sans-serif;color:var(--berry,#9B5DE5)">♪</div>
+    <div style="position:absolute;right:-10%;top:12%;font:700 {{ zf }}/1 Fredoka,sans-serif;color:var(--sky,#56BFF5)">♫</div>
+  </sc-if>
+  <sc-if value="{{ showWave }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:58%;top:44%;width:30%;height:30%;border:{{ bw }} solid var(--sky,#56BFF5);border-left-color:transparent;border-bottom-color:transparent;border-radius:50%;transform:rotate(45deg)"></div>
+    <div style="position:absolute;left:62%;top:36%;width:46%;height:46%;border:{{ bw }} solid var(--sky,#56BFF5);border-left-color:transparent;border-bottom-color:transparent;border-radius:50%;transform:rotate(45deg);opacity:.6"></div>
+  </sc-if>
+  <sc-if value="{{ showQ }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;right:-8%;top:-2%;width:30%;height:30%;background:#fff;border:{{ bw }} solid var(--ink,#2B2340);border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 {{ zf2 }}/1 Fredoka,sans-serif;color:var(--ink,#2B2340)">?</div>
+  </sc-if>
+  <sc-if value="{{ hasHat }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;top:{{ hatTop }};text-align:center;font-size:{{ hatSize }};line-height:1">{{ hatEmoji }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:200,&quot;height&quot;:200},&quot;size&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:120,&quot;tsType&quot;:&quot;number&quot;},&quot;mood&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;happy&quot;,&quot;cheer&quot;,&quot;curious&quot;,&quot;sleepy&quot;,&quot;dance&quot;,&quot;talk&quot;],&quot;default&quot;:&quot;happy&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;hat&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;crown&quot;,&quot;cap&quot;,&quot;flower&quot;,&quot;bow&quot;,&quot;tophat&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const s = this.props.size ?? 120, m = this.props.mood ?? 'happy', hat = this.props.hat ?? 'none';
+    const hats = { crown: '👑', cap: '🧢', flower: '🌸', bow: '🎀', tophat: '🎩' };
+    const bw = Math.max(2, Math.round(s * 0.032));
+    return {
+      px: s + 'px', bw: bw + 'px', bw2: Math.max(3, Math.round(s * 0.045)) + 'px',
+      tilt: m === 'curious' ? '-12deg' : '0deg',
+      anim: m === 'dance' ? 'mdance .9s ease-in-out infinite' : m === 'sleepy' ? 'mbob 3s ease-in-out infinite' : 'none',
+      wingsUp: m === 'cheer' || m === 'dance', wingsDown: !(m === 'cheer' || m === 'dance'),
+      eyesOpen: m === 'happy' || m === 'curious' || m === 'talk', eyesHappy: m === 'cheer' || m === 'dance', eyesClosed: m === 'sleepy',
+      pupilL: m === 'curious' ? '40%' : '26%',
+      beakH: m === 'talk' || m === 'cheer' ? '15%' : '9%',
+      showZ: m === 'sleepy', showNotes: m === 'dance', showWave: m === 'talk', showQ: m === 'curious',
+      zf: Math.round(s * 0.2) + 'px', zf2: Math.round(s * 0.14) + 'px',
+      hasHat: hat !== 'none', hatEmoji: hats[hat] || '', hatSize: Math.round(s * 0.34) + 'px', hatTop: Math.round(-s * 0.12) + 'px'
+    };
+  }
+}
+</script>
+</body>
+</html>
