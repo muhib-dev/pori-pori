@@ -28,10 +28,10 @@ There is no test suite.
 
 **Play flow.**
 1. `lib/engine.ts#buildQuestions(lesson, mode)` turns a lesson into `Question[]`: it cycles through the items, picks distractors (at most 3–4 tiles), and adds shuffled `letters` for `build-word` and shuffled `words` for `order-words`. `story` lessons skip the engine; the play page samples `lesson.stories` itself.
-2. `app/play/page.tsx` renders `<Game>` (dispatcher in `components/games/Games.tsx`, keyed on `q.kind`; `story` uses `<Story>`). Each game calls `onResult(firstTry, missedText?)`. Games: hear-tap, pic-word, build-word, word-pic, sentence-pic, order-words, story, first-sound, rhyme, case-match, blend-tap, fill-blank, syllable-tap, word-hunt.
+2. `app/play/page.tsx` renders `<Game>` (dispatcher in `components/games/Games.tsx`, keyed on `q.kind`; `story` uses `<Story>`). Each game calls `onResult(firstTry, missedText?)`. Games: hear-tap, pic-word, build-word, word-pic, sentence-pic, order-words, story, first-sound, rhyme, case-match, blend-tap, fill-blank, syllable-tap, word-hunt. Every game renders inside `components/games/Scene.tsx` (`useScene` + `<Scene kind="pond|house|train|meadow">`: story-skin stage, Bulbul reaction, miss → auto-replay at 600ms and 2nd-miss glow hint). The play bar's replay button fires a `pp-replay` window event that `useScene` listens for, and games report misses through the optional `onMiss` prop.
 3. When the play finishes, `starsFor()` computes stars, `recordAttempt()` saves (and awards the lesson sticker on first 3★ and updates the day streak), then `pushPending()` runs.
 
-Adding a new `GameType` touches: the union in `syllabus.ts`, `buildQuestions` (if it needs extra fields on `Question`), a component in `Games.tsx`, and the `switch` in `<Game>` (same file).
+Adding a new `GameType` touches: the union in `syllabus.ts`, `buildQuestions` (if it needs extra fields on `Question`), a component in `Games.tsx` (call `useScene`, wrap in `<Scene>`), the `switch` in `<Game>` (same file), and the `BADGE` map in `app/level/page.tsx`.
 
 **Data & sync (`lib/db.ts`, `lib/sync.ts`).** Dexie DB `reading-fun` (legacy name, kept so existing users keep their data) has the tables `profiles`, `progress`, `attempts`, `outbox` and `stickers` (v2; the v2 upgrade derives `startStep` for children who already had progress). There is a single profile, `PROFILE_ID = 'local'`. Every write goes through the helpers (`getOrCreateProfile`, `updateProfile`, `recordAttempt`), which also append an `outbox` event (`profile.upsert | progress.upsert | attempt.create | sticker.create`). Don't write to tables directly, or sync will miss the change. `pushPending()` POSTs to `${NEXT_PUBLIC_SYNC_URL}/sync` and does nothing if the URL is unset. `pullRemote()` is a stub. If you change the schema, bump `this.version(n)` in Dexie; don't edit v1 in place.
 
@@ -39,11 +39,15 @@ Adding a new `GameType` touches: the union in `syllabus.ts`, `buildQuestions` (i
 
 **PWA.** `public/sw.js` is hand-written: navigations are network-first with a cache fallback, other same-origin GETs are cache-first. It is registered in `components/InstallPWA.tsx`. Bump `VERSION` when you need old caches evicted, and update the `SHELL` list when you add a top-level route (`/placement/`, `/stickers/`, `/challenge/` are there).
 
+## Reading Road, Bulbul, wardrobe
+
+Home (`app/page.tsx`) renders `components/ReadingRoad.tsx`: a winding SVG road with one `MapNode` per step (portrait bottom→top, tablet landscape left→right). `components/Mascot.tsx` is Bulbul (CSS bird; moods happy/talk/cheer/curious/sleepy/dance, hats). Hats unlock from total stars (`lib/content/wardrobe.ts`, never spent); only `Profile.wardrobe.equipped` is stored. `/stickers/` holds the sticker book and the wardrobe tab. Avatar picker is a sheet (`components/AvatarPicker.tsx`) opened from the home avatar. `OfflinePill` and `InstallSheet` (max once a week, `Profile.installPromptLastShown`) live on home. Reduced motion: `Profile.reducedMotion` sets `<html data-reduced-motion>` (see `lib/motion.ts`); the OS media query additionally swaps keyframes for 200ms fades. `/grownups` is a separate calm neutral palette (hard-coded hex, not theme tokens).
+
 ## Themes, icons, branding
 
-- Colours are CSS variables (`--c-ink`, `--c-sun`, …, space-separated RGB) defined per theme in `app/globals.css` (`[data-theme="x"]`); Tailwind tokens read them. New theme = a CSS block + an entry in `lib/themes.ts`. `applyTheme()` sets `data-theme` and localStorage; an inline script in `app/layout.tsx` applies it before paint.
+- Colours are CSS variables (`--c-ink`, `--c-sun`, …, plus `--c-paper` page bg, `--c-card` surfaces, `--c-ground` map backdrop; space-separated RGB) defined per theme in `app/globals.css` (`[data-theme="x"]`); Tailwind tokens read them. New theme = a CSS block + an entry in `lib/themes.ts`. `applyTheme()` sets `data-theme` and localStorage; an inline script in `app/layout.tsx` applies it before paint.
 - UI controls use `lucide-react`. Emoji only for content pictures (`Item.emoji`, step/lesson emoji) and avatars.
-- Brand: `components/BrandHeader.tsx` ("পড়ি পড়ি", "Developed by: muhibullah"); Bengali text needs `font-bn` (Noto Sans Bengali), since Fredoka has no Bengali glyphs.
+- Brand: `components/BrandHeader.tsx` ("পড়ি পড়ি" pill; `DevCredit` = "Developed by: muhibullah" footer on home); Bengali text needs `font-bn` (Noto Sans Bengali), since Fredoka has no Bengali glyphs.
 
 ## UI conventions (from README design rules)
 
@@ -54,6 +58,6 @@ The audience is pre-readers, so the UI follows these rules:
 - Wrong answers wiggle or shake and the child retries. Never show an "X". Celebrate every finish.
 - Stars: 3 = no first-try misses, 2 = ≤2 misses and ≥80% correct, 1 = finished.
 - Fonts: `font-read` (Andika, with single-storey a/g) for any text the child reads, `font-ui` (Fredoka) for chrome.
-- Styling: Tailwind "sticker board" tokens in `tailwind.config.ts`. Colours are `ink sun tangerine grass berry bubblegum sky`, shadows are `shadow-tile*`, animations are `pop wiggle shake float`. Shared primitives (`Tile`, `RoundButton`, `Dots`, `Stars`) are in `components/ui.tsx`.
+- Styling: Tailwind "sticker board" tokens in `tailwind.config.ts`. Colours are `ink sun tangerine grass berry bubblegum sky`, shadows are `shadow-tile*`, animations are `pop wiggle shake float`. Shared primitives (`Tile` with `state`, `RoundButton` incl. pill `label`, `Dots`, `PlayBar`, `Stars`, `MapNode`, `StickerCard`, `MascotBubble`) are in `components/ui.tsx`. Tap targets ≥72px (primary 96–104px).
 
 `/grownups` is gated behind a sum. It has name/avatar settings, the read-only current step, per-lesson stars, "needs practice" words, JSON export and reset.

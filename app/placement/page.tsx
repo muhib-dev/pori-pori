@@ -2,12 +2,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Play, SkipForward } from 'lucide-react';
+import { Mascot } from '@/components/Mascot';
 import { LEVELS, PLACEMENT, PLACEMENT_PASSED_STEP, findLesson, modeForStep } from '@/lib/content/syllabus';
 import { buildQuestions, shuffle } from '@/lib/engine';
 import { getOrCreateProfile, updateProfile } from '@/lib/db';
 import { pushPending } from '@/lib/sync';
 import { speak, stopSpeaking } from '@/lib/speech';
-import { Dots, RoundButton, Tile } from '@/components/ui';
+import { PlayBar, RoundButton, Tile } from '@/components/ui';
 import { Celebration } from '@/components/Feedback';
 import { HearTap, WordPic, SentencePic, PicWord, Story } from '@/components/games/Games';
 
@@ -60,17 +61,17 @@ export default function PlacementPage() {
   if (phase === 'ask') {
     return (
       <div className="flex flex-col items-center gap-8 pt-10">
-        <div className="text-7xl animate-float" aria-hidden>🦉</div>
+        <Mascot size={120} mood="talk" say="Show me!" />
         <h1 className="text-4xl font-semibold text-center">Show me!</h1>
         <div className="grid grid-cols-2 gap-4 w-full max-w-md">
           <Tile color="sun" className="h-56 flex-col gap-3" ariaLabel="I am new" onClick={() => begin(0)}>
             <span className="text-8xl">🐣</span><span className="text-3xl font-semibold">New</span>
           </Tile>
           <Tile color="grass" className="h-56 flex-col gap-3" ariaLabel="I can read" onClick={() => begin(1)}>
-            <span className="text-8xl">🦉</span><span className="text-3xl font-semibold">I read</span>
+            <span className="text-8xl">📖</span><span className="text-3xl font-semibold">I read</span>
           </Tile>
         </div>
-        <RoundButton ariaLabel="Skip" onClick={() => finish(1)}><SkipForward className="w-8 h-8" strokeWidth={2.5} /></RoundButton>
+        <RoundButton ariaLabel="Skip" onClick={() => finish(1)}><SkipForward className="w-9 h-9" strokeWidth={2.5} /></RoundButton>
       </div>
     );
   }
@@ -79,25 +80,19 @@ export default function PlacementPage() {
     const step = LEVELS.find((l) => l.id === startStep) ?? LEVELS[0];
     return (
       <div className="flex flex-col items-center gap-8 pt-16">
-        <div className="text-8xl animate-pop" aria-hidden>🎈</div>
+        <Mascot size={160} mood="dance" hat="flower" />
         <h1 className="text-4xl font-semibold text-center animate-bounceIn">Let’s start here!</h1>
         <div className="flex items-center gap-4 text-5xl font-semibold"><span className="animate-float">{step.emoji}</span>{step.name}</div>
-        <Tile href="/" color="grass" className="w-full max-w-md h-24 gap-3" ariaLabel="Go">
-          <Play className="w-12 h-12 fill-paper" strokeWidth={3} /><span className="text-5xl font-semibold">Go</span>
-        </Tile>
+        <RoundButton href="/" ariaLabel="Go" color="grass" label="Go!"><Play className="w-10 h-10 fill-ink" strokeWidth={3} /></RoundButton>
       </div>
     );
   }
 
   const q = questions[qi];
   return (
-    <div className="flex flex-col gap-6 min-h-[100dvh]">
-      <header className="flex items-center gap-3 pt-4">
-        <span className="w-16" />
-        <div className="flex-1"><Dots total={count} done={qi} current={qi} /></div>
-        <span className="w-16" />
-      </header>
-      <section className="flex-1 flex flex-col justify-center py-4" key={`${stage}-${qi}`}>
+    <div className="flex flex-col gap-4 min-h-[100dvh]">
+      <PlayBar total={count} done={qi} current={qi} homeHref={null} />
+      <section className="flex-1 flex flex-col justify-center py-6" key={`${stage}-${qi}`}>
         {lesson.game === 'story' ? <Story story={story!} onResult={onResult} /> :
          lesson.game === 'hear-tap' ? <HearTap q={q} onResult={onResult} /> :
          lesson.game === 'word-pic' ? <WordPic q={q} onResult={onResult} /> :

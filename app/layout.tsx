@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   icons: { icon: '/icons/icon-192.png', apple: '/icons/icon-192.png' },
 };
 export const viewport: Viewport = {
-  themeColor: '#CFEFFF',
+  themeColor: '#FFF6E3',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,        // no pinch-zoom: little hands zoom by accident
@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Backdrop />
         <AppBoot />
-        <main className="min-h-full max-w-2xl mx-auto px-4 pb-8">{children}</main>
+        <main className="min-h-full max-w-2xl md:max-w-4xl mx-auto px-4 pb-8">{children}</main>
       </body>
     </html>
   );

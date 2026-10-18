@@ -4,12 +4,12 @@
 export interface Theme { id: string; name: string; bar: string; stars: number } // stars: total stars needed to unlock
 
 export const THEMES: Theme[] = [
-  { id: 'sunny', name: 'Sunny', bar: '#CFEFFF', stars: 0 },
-  { id: 'ocean', name: 'Ocean', bar: '#BDE3F5', stars: 6 },
-  { id: 'candy', name: 'Candy', bar: '#FFD9EC', stars: 15 },
-  { id: 'forest', name: 'Forest', bar: '#D5F0C8', stars: 30 },
-  { id: 'sunset', name: 'Sunset', bar: '#FFDDBF', stars: 50 },
-  { id: 'grape', name: 'Grape', bar: '#E3D9FF', stars: 80 },
+  { id: 'sunny', name: 'Meadow', bar: '#FFF6E3', stars: 0 },
+  { id: 'ocean', name: 'Ocean', bar: '#E4F5FF', stars: 6 },
+  { id: 'candy', name: 'Candy', bar: '#FFF0F7', stars: 15 },
+  { id: 'forest', name: 'Forest', bar: '#F3FAE9', stars: 30 },
+  { id: 'sunset', name: 'Sunset', bar: '#FFF1E3', stars: 50 },
+  { id: 'grape', name: 'Space dawn', bar: '#F2EDFF', stars: 80 },
 ];
 
 export const DEFAULT_THEME = 'sunny';

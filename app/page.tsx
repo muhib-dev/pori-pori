@@ -3,14 +3,17 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Check, Dumbbell, Flame, Lock, Play, Rocket, ShieldCheck, Sticker } from 'lucide-react';
+import { BookHeart, Dumbbell, Flame, Lock, Play } from 'lucide-react';
 import { db, getOrCreateProfile, PROFILE_ID, streakAlive } from '@/lib/db';
-import { LEVELS, ZONES, canChallenge, currentStepId, findLesson, isLessonUnlocked, isStepDone, isStepUnlocked } from '@/lib/content/syllabus';
-import { Tile, RoundButton, Stars } from '@/components/ui';
-import { BrandHeader } from '@/components/BrandHeader';
-import { ThemePicker } from '@/components/ThemePicker';
+import { LEVELS, currentStepId, findLesson, isLessonUnlocked, isStepDone } from '@/lib/content/syllabus';
+import { RoundButton } from '@/components/ui';
+import { BrandHeader, DevCredit } from '@/components/BrandHeader';
 import { Mascot } from '@/components/Mascot';
-import { DEFAULT_THEME } from '@/lib/themes';
+import { ReadingRoad } from '@/components/ReadingRoad';
+import { AvatarPicker } from '@/components/AvatarPicker';
+import { OfflinePill } from '@/components/OfflinePill';
+import { InstallSheet } from '@/components/InstallSheet';
+import { equippedHat } from '@/lib/content/wardrobe';
 
 export default function Home() {
   const router = useRouter();
@@ -18,6 +21,9 @@ export default function Home() {
   const progress = useLiveQuery(() => db.progress.toArray());
   const recent = useLiveQuery(() => db.attempts.orderBy('at').reverse().limit(30).toArray());
   const [ready, setReady] = useState(false);
+  const [picking, setPicking] = useState(false);
+  const [justFinished, setJustFinished] = useState(false); // install sheet only after a completed lesson
+  useEffect(() => { try { if (sessionStorage.getItem('pp-lesson-done')) { setJustFinished(true); sessionStorage.removeItem('pp-lesson-done'); } } catch { /* private mode */ } }, []);
   useEffect(() => { getOrCreateProfile().then(() => setReady(true)); }, []);
   // A child who has not done "Show me!" yet (and has no saved progress from before it existed) goes there first.
   const needsPlacement = !!profile && profile.startStep === undefined;
@@ -28,7 +34,10 @@ export default function Home() {
   const start = profile.startStep ?? 1;
   const stepId = currentStepId(progress, start);
   const step = LEVELS.find((l) => l.id === stepId)!;
-  const starsIn = step.lessons.reduce((s, l) => s + (progress.find((p) => p.lessonId === l.id)?.bestStars ?? 0), 0);
+  const totalStars = progress.reduce((n, p) => n + p.bestStars, 0);
+  // Play always resumes the first open lesson of the current step.
+  const nextLesson = step.lessons.find((l) => (progress.find((p) => p.lessonId === l.id)?.bestStars ?? 0) === 0 && isLessonUnlocked(progress, l.id, start));
+  const playHref = nextLesson ? `/play/?lesson=${nextLesson.id}` : `/level/?id=${step.id}`;
   const allDone = LEVELS.every((l) => isStepDone(progress, l, start));
   const streak = streakAlive(profile) ? profile.streak ?? 0 : 0;
 
@@ -38,73 +47,44 @@ export default function Home() {
   const practice = practiceId ? findLesson(practiceId) : undefined;
 
   return (
-    <div className="flex flex-col items-center gap-6 pt-4">
-      <header className="w-full flex items-center justify-between">
-        <RoundButton href="/grownups/" ariaLabel="Grown-ups area"><ShieldCheck className="w-8 h-8" strokeWidth={2.5} /></RoundButton>
+    <div className="flex flex-col items-center gap-4 pt-4 pb-56">
+      <header className="w-full flex items-center justify-between h-28">
+        <RoundButton onClick={() => setPicking(true)} ariaLabel="Change avatar" color="card" className="text-5xl"><span aria-hidden>{profile.avatar}</span></RoundButton>
         <BrandHeader />
-        <ThemePicker current={profile.theme ?? DEFAULT_THEME} stars={progress.reduce((n, p) => n + p.bestStars, 0)} />
+        <RoundButton href="/stickers/" ariaLabel="Sticker book" color="bubblegum"><BookHeart className="w-9 h-9" strokeWidth={2.5} /></RoundButton>
       </header>
 
-      <div className="flex items-center gap-4">
-        <div className="text-6xl animate-wave origin-bottom" aria-hidden>{profile.avatar}</div>
-        <h2 className="text-4xl font-semibold leading-tight animate-bounceIn">{profile.name ? `Hi ${profile.name}!` : 'Let’s read!'}</h2>
+      <div className="flex items-center gap-3 min-h-9">
+        <OfflinePill />
+        {streak > 0 && <span className="flex items-center gap-1 bg-card border-[3px] border-ink rounded-full px-4 py-0.5 text-2xl font-semibold shadow-tileSm" aria-label={`${streak} days in a row`}><Flame className="w-6 h-6 fill-tangerine" strokeWidth={2.5} />{streak}</span>}
+        {practice && (
+          <RoundButton href={`/play/?lesson=${practice.id}`} ariaLabel={`Practice ${practice.title}`} color="sun"><Dumbbell className="w-8 h-8" strokeWidth={3} /></RoundButton>
+        )}
       </div>
 
-      <div className="flex items-center gap-4">
-        {streak > 0 && <span className="flex items-center gap-1 bg-paper border-4 border-ink rounded-full px-4 py-1 text-3xl font-semibold shadow-tileSm" aria-label={`${streak} days in a row`}><Flame className="w-8 h-8 fill-tangerine" strokeWidth={2.5} />{streak}</span>}
-        <RoundButton href="/stickers/" ariaLabel="Stickers"><Sticker className="w-8 h-8" strokeWidth={2.5} /></RoundButton>
+      <ReadingRoad progress={progress} start={start} avatar={profile.avatar} allDone={allDone} />
+
+      <div className="fixed bottom-0 inset-x-0 z-30 pointer-events-none">
+        <div className="relative max-w-2xl md:max-w-4xl mx-auto px-4 pb-4 pt-10 bg-gradient-to-t from-paper via-paper/90 to-transparent">
+          <div className="flex items-end justify-between pointer-events-auto">
+            <Mascot size={96} mood="cheer" hat={equippedHat(profile.wardrobe?.equipped, totalStars)} say="Let's read!" />
+            <RoundButton href={playHref} ariaLabel="Play" color="sun" label="Play"><Play className="w-10 h-10 fill-ink" strokeWidth={3} /></RoundButton>
+          </div>
+          <div className="text-center pt-2"><DevCredit /></div>
+        </div>
       </div>
-      {streak >= 2 && <Mascot say={`${streak} days in a row!`} />}
-
-      <Tile href={`/level/?id=${step.id}`} color={step.color === 'sky' ? 'paper' : step.color} className="w-full flex-col gap-3 py-8 min-h-64 animate-bounceIn" ariaLabel={`Play step ${step.id}: ${step.name}`}>
-        <span className="text-xl font-semibold bg-paper border-4 border-ink rounded-full px-4 py-0.5">{allDone ? 'All done! Replay' : `Step ${step.id}`}</span>
-        <span className="text-8xl animate-float">{step.emoji}</span>
-        <span className="text-4xl font-semibold">{step.name}</span>
-        <Stars n={Math.round((starsIn / (step.lessons.length * 3)) * 3)} />
-      </Tile>
-
-      <Tile href={`/level/?id=${step.id}`} color="grass" className="w-full h-24 gap-3 animate-pulseSoft" ariaLabel="Play">
-        <Play className="w-12 h-12 fill-paper" strokeWidth={3} />
-        <span className="text-5xl font-semibold">Play</span>
-      </Tile>
-
-      {practice && (
-        <Tile href={`/play/?lesson=${practice.id}`} color="sun" className="w-full h-20 gap-3" ariaLabel={`Practice ${practice.title}`}>
-          <Dumbbell className="w-9 h-9" strokeWidth={3} /><span className="text-5xl">{practice.emoji}</span><span className="text-3xl font-semibold">Practice</span>
-        </Tile>
-      )}
-
-      {/* Reading trail: every step is visible. Done and current steps open (replay any); later ones show a lock. */}
-      <div className="w-full flex flex-col gap-5 pt-2" aria-label="Reading trail">
-        {ZONES.map((z) => {
-          const steps = LEVELS.filter((l) => l.zone === z.id);
-          if (!steps.length) return null;
-          return (
-            <section key={z.id} className="flex flex-col gap-2">
-              <h3 className="flex items-baseline gap-2 text-2xl font-semibold"><span aria-hidden>{z.emoji}</span>{z.name}<span className="text-base text-ink/60">{z.blurb}</span></h3>
-              <ol className="grid grid-cols-3 gap-3">
-                {steps.map((l) => {
-                  const open = isStepUnlocked(progress, l.id, start);
-                  const done = isStepDone(progress, l, start);
-                  const current = l.id === stepId && !allDone;
-                  const jump = !open && l.id === stepId + 1 && canChallenge(l); // 🚀 skip-ahead quiz
-                  return (
-                    <li key={l.id}>
-                      <Tile href={open ? `/level/?id=${l.id}` : jump ? `/challenge/?step=${l.id}` : undefined} disabled={!open && !jump} color={open ? (l.color === 'sky' ? 'paper' : l.color) : 'paper'}
-                        className={`relative w-full aspect-square flex-col gap-1 p-2 ${current ? 'animate-pulseSoft' : ''} ${open || jump ? '' : 'opacity-60'}`}
-                        ariaLabel={`Step ${l.id}: ${l.name}${done ? ', done' : current ? ', now' : open ? '' : jump ? ', jump ahead' : ', locked'}`}>
-                        {open ? <span className="text-5xl">{l.emoji}</span> : jump ? <Rocket className="w-10 h-10" strokeWidth={2.5} /> : <Lock className="w-10 h-10" strokeWidth={2.5} />}
-                        <span className="text-base font-semibold leading-tight text-center">{l.name}</span>
-                        {done && <span className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-grass border-4 border-ink flex items-center justify-center"><Check className="w-4 h-4" strokeWidth={4} /></span>}
-                      </Tile>
-                    </li>
-                  );
-                })}
-              </ol>
-            </section>
-          );
-        })}
-      </div>
+      <GrownupsLock />
+      <InstallSheet eligible={justFinished} lastShown={profile.installPromptLastShown} />
+      {picking && <AvatarPicker current={profile.avatar} onClose={() => setPicking(false)} />}
     </div>
+  );
+}
+
+/** Grown-ups lock: intentionally small (52px) and low contrast so children do not wander in. */
+function GrownupsLock() {
+  return (
+    <Link href="/grownups/" aria-label="Grown-ups area" className="fixed right-4 bottom-[150px] z-30 w-[52px] h-[52px] rounded-full border-[3px] border-ink/30 bg-card/60 flex items-center justify-center text-ink/40">
+      <Lock className="w-6 h-6" strokeWidth={2.5} />
+    </Link>
   );
 }

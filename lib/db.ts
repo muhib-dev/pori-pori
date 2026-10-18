@@ -19,6 +19,9 @@ export interface Profile {
   readerMode?: ReaderMode; // listen: audio-first prompts; read: text-first (set by placement)
   streak?: number;        // consecutive days played
   lastPlayedDay?: string; // local YYYY-MM-DD of the last finished lesson
+  wardrobe?: { equipped: string }; // Bulbul's hat id (lib/content/wardrobe.ts); owned items are derived from total stars, never spent
+  reducedMotion?: boolean; // in-app switch: every effect becomes a 200ms fade
+  installPromptLastShown?: number; // ms; the install sheet shows at most once a week
   createdAt: number;
   updatedAt: number;
 }
