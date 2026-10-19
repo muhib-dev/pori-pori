@@ -50,8 +50,10 @@ export function buildQuestions(lesson: Lesson, mode?: ReaderMode, rounds = lesso
     if (lesson.game === 'rhyme') {
       // Answer is another word from the same family (hint); distractors come from other families.
       const mate = shuffle(pool.filter((i) => i.hint === target.hint && i.text !== target.text))[0];
+      const others = shuffle(pool.filter((i) => i.hint !== target.hint));
       const seen = new Set<string>();
-      const far = shuffle(pool.filter((i) => i.hint !== target.hint)).filter((i) => !seen.has(i.hint!) && !!seen.add(i.hint!)).slice(0, wordCount); // one decoy per family
+      // prefer one decoy per family, then top up from the rest so the tile count never drops
+      const far = [...others.filter((i) => !seen.has(i.hint!) && !!seen.add(i.hint!)), ...others].filter((i, k, a) => a.indexOf(i) === k).slice(0, wordCount);
       options = shuffle([mate, ...far]);
       answer = options.findIndex((o) => o.text === mate.text);
     }
