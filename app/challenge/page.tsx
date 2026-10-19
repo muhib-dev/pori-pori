@@ -32,7 +32,7 @@ function ChallengeInner() {
   const progress = useLiveQuery(() => db.progress.toArray());
   const profile = useLiveQuery(() => db.profiles.get(PROFILE_ID));
   const start = profile?.startStep ?? 1;
-  const mode = profile?.readerMode;
+  const mode = profile?.readerMode ?? 'listen';
   const [i, setI] = useState(0);
   const [misses, setMisses] = useState(0);
   const [cheer, setCheer] = useState(false);

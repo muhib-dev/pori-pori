@@ -29,7 +29,7 @@ function PlayInner() {
   const level = levelOfLesson(lessonId);
   const [seed, setSeed] = useState(0);
   const profile = useLiveQuery(() => db.profiles.get(PROFILE_ID));
-  const mode = profile?.readerMode;
+  const mode = profile?.readerMode ?? 'listen';
   const questions = useMemo(
     () => (lesson ? buildQuestions(lesson, mode) : []),
     [lesson, mode, seed],

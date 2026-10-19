@@ -15,8 +15,8 @@ export interface Profile {
   age: number;
   currentLevel: number;   // legacy: the current step is now derived from progress
   theme?: string;         // theme id, see lib/themes.ts
-  startStep?: number;     // steps below this count as skipped; undefined = placement not done yet
-  readerMode?: ReaderMode; // listen: audio-first prompts; read: text-first (set by placement)
+  startStep?: number;     // steps below this count as skipped; undefined = start at step 1
+  readerMode?: ReaderMode; // listen: audio-first prompts; read: text-first (default listen; set in grown-ups)
   streak?: number;        // consecutive days played
   lastPlayedDay?: string; // local YYYY-MM-DD of the last finished lesson
   wardrobe?: { equipped: string }; // Bulbul's hat id (lib/content/wardrobe.ts); owned items are derived from total stars, never spent

@@ -40,7 +40,7 @@ Twelve steps in three zones, shown as a reading trail on the home screen:
 | | 11 Long Words | compound and two-chunk words | tap the chunks, picture → word |
 | | 12 Super Reader | fluency, longer text | word hunt, fill the gap, long sentences, longer stories |
 
-**Finding the right start.** A new child sees "Show me!": pick 🐣 New or 🦉 I read, then up to 4 stages of 3 questions (letter sound, word, sentence, story). Missing a stage just says "Let's start here!" and sets the starting step (`startStep`); steps before it count as done and stay open to replay. The next locked step shows a 🚀: a 5-question quiz that opens it if 4 are right first time (no penalty otherwise). Grown-ups can change the start step, the reading mode (🎧 Listen: reads questions aloud, fewer choices · 📖 Read) or rerun the quiz.
+**Finding the right start.** A new child starts at step 1. Grown-ups can change the starting step (`startStep`; steps before it count as done and stay open to replay) and the reading mode (🎧 Listen: reads questions aloud, fewer choices · 📖 Read). The next locked step shows a 🚀: a 5-question quiz that opens it if 4 are right first time (no penalty otherwise).
 
 **Order inside a step:** a step opens when every lesson in the previous step has ≥1 star, and lessons inside a step open in order. Locked steps/lessons typed into the URL redirect home. Stars: 3 = no mistakes, 2 = ≤2 first-try mistakes, 1 = finished.
 

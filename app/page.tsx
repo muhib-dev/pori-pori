@@ -25,15 +25,12 @@ export default function Home() {
   const [ready, setReady] = useState(false);
   const [picking, setPicking] = useState(false);
   const [justFinished, setJustFinished] = useState(false); // install sheet only after a completed lesson
-  // Phone opened via the desktop QR (?install=1): remember it across the placement redirect so InstallSheet can offer install.
+  // Phone opened via the desktop QR (?install=1): remember it so InstallSheet can offer install once it is ready.
   useEffect(() => { try { if (new URLSearchParams(location.search).get('install') === '1') sessionStorage.setItem('pp-install', '1'); } catch { /* private mode */ } }, []);
   useEffect(() => { try { if (sessionStorage.getItem('pp-lesson-done')) { setJustFinished(true); sessionStorage.removeItem('pp-lesson-done'); } } catch { /* private mode */ } }, []);
   useEffect(() => { getOrCreateProfile().then(() => setReady(true)); }, []);
-  // A child who has not done "Show me!" yet (and has no saved progress from before it existed) goes there first.
-  const needsPlacement = !!profile && profile.startStep === undefined;
-  useEffect(() => { if (needsPlacement) router.replace('/placement/'); }, [needsPlacement, router]);
 
-  if (!ready || !profile || !progress || !recent || needsPlacement) return null;
+  if (!ready || !profile || !progress || !recent) return null;
   // The current step is derived from progress: the first step not yet finished (steps below startStep count as skipped).
   const totalStars = progress.reduce((n, p) => n + p.bestStars, 0);
   const streak = streakAlive(profile) ? profile.streak ?? 0 : 0;

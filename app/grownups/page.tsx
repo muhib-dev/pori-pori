@@ -124,7 +124,6 @@ export default function Grownups() {
           </select>
           <span className="text-[#6B6760]">Steps before this one count as done and stay open to replay.</span>
         </label>
-        <Link href="/placement/" className="underline">Run the “Show me!” quiz again</Link>
         <label className="flex items-center justify-between gap-3">
           <span>Reduce motion<span className="block text-[#6B6760]">Effects become short fades. Sounds stay.</span></span>
           <input type="checkbox" className="w-6 h-6" checked={!!profile.reducedMotion} onChange={(e) => { applyReducedMotion(e.target.checked); updateProfile({ reducedMotion: e.target.checked }); }} />

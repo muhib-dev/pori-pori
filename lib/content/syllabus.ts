@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 // SYLLABUS
 // 12 steps in 3 zones (Seeds 1–4, Sprouts 5–8, Trees 9–12), easiest → hardest. Each step
-// opens when the previous one is finished; placement and the skip challenge can jump ahead.
+// opens when the previous one is finished; the skip challenge can jump ahead.
 // Based on the Jolly Phonics sound order used by most Bangladeshi English-medium
 // schools, Dolch sight words (pre-primer → primer), and the "science of reading"
 // sequence: sound play → letters → blending (CVC) → word families → sight words →
@@ -395,7 +395,7 @@ export const levelOfLesson = (id: string) => LEVELS.find((lv) => lv.lessons.some
 
 // --- Step progression. A step opens when every lesson in the previous step has at
 // least 1 star; inside a step, lessons open in order. `start` (Profile.startStep,
-// set by placement or the skip challenge) marks every step below it as skipped:
+// set by grown-ups or the skip challenge) marks every step below it as skipped:
 // counted done, and all its lessons stay open so the child can replay them freely.
 export interface ProgressLike { lessonId: string; bestStars: number }
 const starsOf = (p: ProgressLike[], id: string) => p.find((x) => x.lessonId === id)?.bestStars ?? 0;
@@ -414,18 +414,6 @@ export const isLessonUnlocked = (p: ProgressLike[], lessonId: string, start = 1)
 // The 🚀 skip-ahead quiz samples one question per lesson, so a step made only of stories cannot be challenged.
 export const canChallenge = (step: Level) => step.lessons.some((l) => l.game !== 'story');
 
-// --- Placement ("Show me!"): up to 4 stages of 3 questions, each drawn from an existing
-// lesson. Missing a stage (more than 1 first-try miss) ends the quiz and starts the child
-// at `startIfMissed`; passing every stage starts them at PLACEMENT_PASSED_STEP. This is the
-// only place placement knows about step numbers, so update it when steps are inserted.
-export const PLACEMENT: { lessonId: string; startIfMissed: number }[] = [
-  { lessonId: 'l1-mix', startIfMissed: 1 },   // hear a letter sound, tap the letter       → Sound Play
-  { lessonId: 'l2-read', startIfMissed: 3 },  // read a CVC word, tap the picture          → Blend Words
-  { lessonId: 'l5-s1', startIfMissed: 5 },    // read a sentence, tap the scene            → Sight Words
-  { lessonId: 'l6-st', startIfMissed: 8 },    // read a tiny story, answer the question    → Story Time
-];
-export const PLACEMENT_PASSED_STEP = 9;
-
 export type ReaderMode = 'listen' | 'read';
 
 // Reader mode that suits a starting step: Seeds are audio-first, the rest text-first.
@@ -439,7 +427,7 @@ export const modeForStep = (id: number): ReaderMode => (LEVELS.find((l) => l.id 
 const LEGACY_LESSON_COUNT: Record<number, number> = { 1: 5, 2: 6, 3: 6, 4: 6, 5: 5, 6: 5 };
 const LEGACY_STEP_MAP: Record<number, number> = { 1: 2, 2: 3, 3: 5, 4: 6, 5: 7, 6: 9 };
 export const legacyStartStep = (p: ProgressLike[]): number | undefined => {
-  if (!p.length) return undefined; // brand-new child: placement decides
+  if (!p.length) return undefined; // brand-new child: starts at step 1
   const doneIn = (n: number) => p.filter((x) => x.bestStars >= 1 && x.lessonId.startsWith(`l${n}-`)).length;
   // Lessons added to old steps since (l1-abc, l2-tap, l5-fb) have no legacy plays, so a child who
   // finished an old step may now owe them; the 12-step trail still lets them replay or carry on.

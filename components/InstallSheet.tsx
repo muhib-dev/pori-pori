@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Plus } from "lucide-react";
+import { ChevronDown, Plus, X } from "lucide-react";
 import { updateProfile } from "@/lib/db";
 import { RoundButton } from "./ui";
-import { InstallHelp, detectPlatform, isStandalone } from "./InstallHelp";
+import { InstallHelp, SiteQr, detectPlatform, isStandalone } from "./InstallHelp";
 
 interface InstallEvent extends Event {
   prompt(): Promise<void>;
@@ -67,6 +67,29 @@ export function InstallSheet({
     }
   }, [ready, ios, eligible, lastShown]);
   if (!open) return null;
+  // Desktop: just a big QR to scan with a phone.
+  if (desktop)
+    return (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4"
+        onClick={() => setOpen(false)}
+      >
+        <div
+          className="bg-paper border-4 border-ink rounded-sheet shadow-tile px-8 py-8 flex flex-col items-center gap-6 animate-bounceIn"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2 className="text-3xl font-bold text-center">Scan to install</h2>
+          <SiteQr size={320} bare />
+          <RoundButton
+            onClick={() => setOpen(false)}
+            ariaLabel="Close"
+            color="sky"
+          >
+            <X className="w-9 h-9" strokeWidth={3} />
+          </RoundButton>
+        </div>
+      </div>
+    );
   const add = async () => {
     await ev.current?.prompt();
     setOpen(false);

@@ -21,7 +21,7 @@ export function isStandalone(): boolean {
 const siteUrl = () => process.env.NEXT_PUBLIC_SITE_URL || `${location.origin}/`;
 
 /** QR code of the site URL, drawn client-side so it also works offline. */
-export function SiteQr({ size = 176 }: { size?: number }) {
+export function SiteQr({ size = 176, bare = false }: { size?: number; bare?: boolean }) {
   const [src, setSrc] = useState('');
   const [url, setUrl] = useState('');
   useEffect(() => {
@@ -34,8 +34,8 @@ export function SiteQr({ size = 176 }: { size?: number }) {
   return (
     <div className="flex flex-col items-center gap-2">
       {src && <img src={src} alt="QR code to open Pori Pori on a phone" width={size} height={size} className="rounded-2xl border-4 border-ink bg-white p-1" />}
-      <span className="text-sm break-all text-center">{url}</span>
-      {local && <span className="text-xs text-center opacity-70">This is a local address. A phone cannot open it. Set NEXT_PUBLIC_SITE_URL to the public or LAN address.</span>}
+      {!bare && <span className="text-sm break-all text-center">{url}</span>}
+      {!bare && local &&<span className="text-xs text-center opacity-70">This is a local address. A phone cannot open it. Set NEXT_PUBLIC_SITE_URL to the public or LAN address.</span>}
     </div>
   );
 }
