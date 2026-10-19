@@ -83,7 +83,7 @@ function LevelInner() {
       </TopBar>
 
       {/* Lesson bubbles in two staggered columns */}
-      <ol className="grid grid-cols-2 gap-x-4 gap-y-6 pb-24">
+      <ol className="grid grid-cols-2 gap-x-4 gap-y-6 pb-[max(6rem,calc(var(--safe-bottom)+3rem))]">
         {level.lessons.map((lesson, i) => {
           const s = stars(lesson.id);
           const unlocked = open(i);

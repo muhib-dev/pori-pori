@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { primeVoices } from "@/lib/speech";
+import { primeVoices, unlockAudio } from "@/lib/speech";
 import { pushPending } from "@/lib/sync";
 import { getOrCreateProfile } from "@/lib/db";
 import { applyTheme } from "@/lib/themes";
@@ -25,7 +25,18 @@ export function AppBoot() {
     sync();
 
     window.addEventListener("online", sync);
-    return () => window.removeEventListener("online", sync);
+    const unlock = () => {
+      unlockAudio();
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("touchend", unlock);
+    };
+    window.addEventListener("pointerdown", unlock);
+    window.addEventListener("touchend", unlock);
+    return () => {
+      window.removeEventListener("online", sync);
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("touchend", unlock);
+    };
   }, []);
   return null;
 }

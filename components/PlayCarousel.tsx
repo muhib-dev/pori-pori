@@ -33,6 +33,8 @@ export function PlayCarousel({
   const [landed, setLanded] = useState(false);
   const [dice, setDice] = useState(0);
   const [wide, setWide] = useState(false); // tablet landscape: three full cards
+  const [k, setK] = useState(1); // stage scale: cards are designed at 400px tall and shrink to fit short screens
+  const stage = useRef<HTMLDivElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>();
   const x0 = useRef(0);
   const swiped = useRef(false);
@@ -44,6 +46,14 @@ export function PlayCarousel({
     on();
     mq.addEventListener("change", on);
     return () => mq.removeEventListener("change", on);
+  }, []);
+
+  useEffect(() => {
+    const el = stage.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setK(Math.min(1, Math.max(0.4, el.clientHeight / 400))));
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
   const go = useCallback(
@@ -113,7 +123,8 @@ export function PlayCarousel({
     else onPlay(games[i]);
   };
 
-  const gap = wide ? 300 : 250;
+  const gap = (wide ? 300 : 250) * k;
+  const mascotSize = Math.round(56 + 36 * k);
   const msg = spinning
     ? "Hmm… which one?"
     : landed
@@ -121,9 +132,9 @@ export function PlayCarousel({
       : "Pick any game — or spin!";
 
   return (
-    <div className="flex-1 min-h-0 w-full flex flex-col items-center justify-between select-none">
+    <div className="flex-1 min-h-0 w-full flex flex-col items-center select-none">
       <div
-        className="relative w-full flex flex-col items-center gap-5 touch-pan-y"
+        className="relative flex-1 min-h-0 w-full flex flex-col items-center gap-[clamp(4px,1.5dvh,20px)] touch-pan-y"
         onPointerDown={(e) => {
           x0.current = e.clientX;
           swiped.current = false;
@@ -137,7 +148,8 @@ export function PlayCarousel({
         }}
       >
         <div
-          className="relative w-full h-[400px] overflow-hidden"
+          ref={stage}
+          className="relative w-full flex-1 min-h-0 overflow-hidden"
           aria-roledescription="carousel"
         >
           {games.map((g, i) => {
@@ -145,12 +157,12 @@ export function PlayCarousel({
             if (off > n / 2) off -= n;
             if (off < -n / 2) off += n;
             const abs = Math.abs(off);
-            const sc = off === 0 ? (landed ? 1.06 : 1) : wide ? 0.92 : 0.82;
+            const sc = (off === 0 ? (landed ? 1.06 : 1) : wide ? 0.92 : 0.82) * k;
             const op = abs > 1 ? 0 : off === 0 ? 1 : wide ? 0.9 : 0.55;
             return (
               <div
                 key={g.id}
-                className="absolute left-1/2 top-0 -ml-[130px]"
+                className="absolute left-1/2 top-1/2 -ml-[130px] -mt-[196px]"
                 aria-hidden={abs > 1}
                 style={{
                   transform: `translateX(${off * gap}px) scale(${sc})`,
@@ -175,7 +187,7 @@ export function PlayCarousel({
             );
           })}
         </div>
-        <div className="w-full max-w-md md:max-w-3xl flex items-center justify-between">
+        <div className="shrink-0 w-full max-w-md md:max-w-3xl flex items-center justify-between">
           <RoundButton
             onClick={() => step(-1)}
             ariaLabel="Previous game"
@@ -200,16 +212,17 @@ export function PlayCarousel({
         </div>
       </div>
 
-      <div className="relative w-full max-w-md md:max-w-2xl flex items-end gap-3 pt-2">
+      <div className="relative shrink-0 w-full max-w-md md:max-w-2xl flex items-end gap-3 pt-1">
         <span
           role="status"
           aria-live="polite"
-          className="absolute left-1 bottom-[104px] max-w-[200px] md:max-w-[260px] bg-card border-4 border-ink rounded-[22px_22px_22px_6px] px-3.5 py-2.5 font-ui font-semibold text-[19px] leading-[1.15] shadow-tileSm"
+          style={{ bottom: mascotSize + 12 }}
+          className="absolute left-1 max-w-[200px] md:max-w-[260px] bg-card border-4 border-ink rounded-[22px_22px_22px_6px] px-3.5 py-2.5 font-ui font-semibold text-[19px] leading-[1.15] shadow-tileSm"
         >
           {msg}
         </span>
         <Mascot
-          size={92}
+          size={mascotSize}
           mood={spinning ? "dance" : landed ? "cheer" : "curious"}
           hat={hat}
         />

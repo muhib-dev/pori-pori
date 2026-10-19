@@ -28,6 +28,13 @@ function PlayInner() {
   const lesson = findLesson(lessonId);
   const level = levelOfLesson(lessonId);
   const [seed, setSeed] = useState(0);
+  const [vh, setVh] = useState(800); // viewport height, to scale the results mascot on short screens
+  useEffect(() => {
+    const on = () => setVh(window.innerHeight);
+    on();
+    window.addEventListener("resize", on);
+    return () => window.removeEventListener("resize", on);
+  }, []);
   const profile = useLiveQuery(() => db.profiles.get(PROFILE_ID));
   const mode = profile?.readerMode ?? 'listen';
   const questions = useMemo(
@@ -156,7 +163,7 @@ function PlayInner() {
       </span>
     );
     return (
-      <div className="relative flex flex-col items-center gap-6 pt-12 min-h-[100dvh] overflow-hidden">
+      <div className="relative flex flex-col items-center justify-center gap-[clamp(8px,2.5dvh,24px)] py-[clamp(8px,3dvh,32px)] min-h-[calc(100dvh-var(--safe-top)-var(--safe-bottom))] overflow-hidden">
         <div
           aria-hidden
           className="absolute -z-10 top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full opacity-40 animate-[spin_40s_linear_infinite]"
@@ -200,7 +207,7 @@ function PlayInner() {
           </span>
         )}
         <Mascot
-          size={140}
+          size={Math.round(Math.min(140, Math.max(72, vh * 0.16)))}
           mood="dance"
           hat={
             stars === 3
@@ -233,7 +240,7 @@ function PlayInner() {
   const q = questions[i];
   const key = `${seed}-${i}`;
   return (
-    <div className="flex flex-col gap-4 min-h-[100dvh]">
+    <div className="flex flex-col gap-4 min-h-[calc(100dvh-var(--safe-top)-var(--safe-bottom))]">
       <PlayBar
         total={total}
         done={i}
@@ -247,7 +254,7 @@ function PlayInner() {
         missed={missed}
       />
 
-      <section className="flex-1 flex flex-col justify-center py-6" key={key}>
+      <section className="flex-1 flex flex-col justify-center py-[clamp(4px,2dvh,24px)]" key={key}>
         {lesson.game === "story" ? (
           <Story story={stories[i]} onResult={onResult} mode={mode} />
         ) : (

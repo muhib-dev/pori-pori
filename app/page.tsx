@@ -41,14 +41,15 @@ export default function Home() {
   const practice = practiceId ? findLesson(practiceId) : undefined;
 
   return (
-    <div className="flex flex-col items-center gap-3 pt-4 h-dvh overflow-hidden">
-      <header className="w-full flex items-center justify-between h-28">
+    // Body already pads the safe areas, so subtract them: the whole home screen always fits the visible viewport.
+    <div className="flex flex-col items-center gap-[clamp(2px,1dvh,12px)] pt-[clamp(2px,1.2dvh,16px)] h-[calc(100dvh-var(--safe-top)-var(--safe-bottom))] overflow-hidden">
+      <header className="w-full shrink-0 flex items-center justify-between h-[clamp(64px,11dvh,112px)]">
         <RoundButton onClick={() => setPicking(true)} ariaLabel="Change avatar" color="card" className="text-5xl"><span aria-hidden>{profile.avatar}</span></RoundButton>
         <BrandHeader />
         <RoundButton href="/stickers/" ariaLabel="Sticker book" color="bubblegum"><BookHeart className="w-9 h-9" strokeWidth={2.5} /></RoundButton>
       </header>
 
-      <div className="flex items-center gap-3 min-h-9">
+      <div className="shrink-0 flex items-center gap-3 min-h-9">
         <OfflinePill />
         {streak > 0 && <span className="flex items-center gap-1 bg-card border-[3px] border-ink rounded-full px-4 py-0.5 text-2xl font-semibold shadow-tileSm" aria-label={`${streak} days in a row`}><Flame className="w-6 h-6 fill-tangerine" strokeWidth={2.5} />{streak}</span>}
         {practice && (
@@ -59,7 +60,7 @@ export default function Home() {
       <PlayCarousel games={HOME_GAMES} progress={progress} startIndex={profile.homeIndex ?? 0} hat={equippedHat(profile.wardrobe?.equipped, totalStars)} reduced={reduced}
         onIndexChange={(i) => updateProfile({ homeIndex: i })}
         onPlay={(g) => { const l = pickLesson(g, progress); if (l) router.push(`/play/?lesson=${l.id}`); }} />
-      <div className="text-center pb-2"><DevCredit /></div>
+      <div className="shrink-0 text-center pb-1"><DevCredit /></div>
       <GrownupsLock />
       <InstallSheet eligible={justFinished} lastShown={profile.installPromptLastShown} />
       {picking && <AvatarPicker current={profile.avatar} onClose={() => setPicking(false)} />}
@@ -70,7 +71,7 @@ export default function Home() {
 /** Grown-ups lock: intentionally small (52px) and low contrast so children do not wander in. */
 function GrownupsLock() {
   return (
-    <Link href="/grownups/" aria-label="Grown-ups area" className="fixed right-4 bottom-8 z-30 w-[52px] h-[52px] rounded-full border-[3px] border-ink/30 bg-card/60 flex items-center justify-center text-ink/40">
+    <Link href="/grownups/" aria-label="Grown-ups area" className="fixed right-4 bottom-[calc(var(--safe-bottom)+0.75rem)] z-30 w-[52px] h-[52px] rounded-full border-[3px] border-ink/30 bg-card/60 flex items-center justify-center text-ink/40">
       <Lock className="w-6 h-6" strokeWidth={2.5} />
     </Link>
   );

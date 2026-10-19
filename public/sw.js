@@ -1,6 +1,6 @@
 // Offline-first service worker. Pages: network-first with cache fallback.
 // Static assets (/_next/static, fonts, icons, audio): cache-first.
-const VERSION = "rf-v7";
+const VERSION = "rf-v8";
 const SHELL = [
   "/",
   "/level/",
@@ -38,6 +38,8 @@ self.addEventListener("fetch", (e) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== location.origin) return;
+  // iOS <audio> sends Range requests; a cached full 200 body breaks playback, so let the network handle clips.
+  if (url.pathname.startsWith("/audio/")) return;
 
   // Network-first for pages and Next chunks (dev chunks have unhashed names, so cache-first served stale code).
   if (req.mode === "navigate" || url.pathname.startsWith("/_next/")) {

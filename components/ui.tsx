@@ -147,7 +147,7 @@ export function CarouselDots({ total, current, onSelect }: { total: number; curr
 export function SurpriseButton({ onClick, turns, disabled, reduced }: { onClick: () => void; turns: number; disabled?: boolean; reduced?: boolean }) {
   return (
     <button type="button" onClick={onClick} disabled={disabled} aria-label="Surprise! Pick a game for me"
-      className="flex-1 flex items-center justify-center gap-2.5 h-[84px] rounded-full bg-berry text-white border-[5px] border-ink shadow-[0_7px_0_0_rgb(var(--c-ink))] font-ui font-bold text-[25px] leading-none active:translate-y-[5px] active:shadow-[0_2px_0_0_rgb(var(--c-ink))] transition-[transform,box-shadow] duration-100 focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-sun">
+      className="flex-1 flex items-center justify-center gap-2.5 h-[clamp(60px,9dvh,84px)] rounded-full bg-berry text-white border-[5px] border-ink shadow-[0_7px_0_0_rgb(var(--c-ink))] font-ui font-bold text-[25px] leading-none active:translate-y-[5px] active:shadow-[0_2px_0_0_rgb(var(--c-ink))] transition-[transform,box-shadow] duration-100 focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-sun">
       <span aria-hidden className="inline-block text-[38px]" style={{ transform: `rotate(${turns * 720}deg)`, transition: reduced ? 'none' : 'transform 1.1s cubic-bezier(.2,.9,.3,1)' }}>🎲</span>Surprise!
     </button>
   );

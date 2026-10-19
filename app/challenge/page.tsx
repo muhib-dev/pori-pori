@@ -127,7 +127,7 @@ function ChallengeInner() {
   }
 
   return (
-    <div className="flex flex-col gap-4 min-h-[100dvh]">
+    <div className="flex flex-col gap-4 min-h-[calc(100dvh-var(--safe-top)-var(--safe-bottom))]">
       <PlayBar
         total={questions.length}
         done={i}
