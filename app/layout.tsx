@@ -33,7 +33,7 @@ export default function RootLayout({
       <body>
         <Backdrop />
         <AppBoot />
-        <main className="min-h-full max-w-2xl md:max-w-4xl mx-auto px-4">
+        <main className="min-h-full max-w-2xl md:max-w-4xl mx-auto px-4 pb-8">
           {children}
         </main>
       </body>

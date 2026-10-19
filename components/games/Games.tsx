@@ -50,7 +50,9 @@ function PicCard({
       onClick={onTap}
       ariaLabel="Picture"
       className={
-        size === "lg" ? "w-44 h-44 text-[6rem]" : "w-36 h-36 text-[5rem]"
+        size === "lg"
+          ? "w-[clamp(110px,20dvh,176px)] h-[clamp(110px,20dvh,176px)] text-[clamp(3.5rem,10dvh,6rem)]"
+          : "w-[clamp(96px,17dvh,144px)] h-[clamp(96px,17dvh,144px)] text-[clamp(3rem,8.5dvh,5rem)]"
       }
     >
       {emoji}

@@ -78,7 +78,7 @@ export function Scene({
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-6 w-full">
+    <div className="flex flex-col items-center gap-[clamp(12px,2.5dvh,24px)] w-full">
       <div
         className={`relative w-full max-w-xl rounded-card border-4 border-ink ${stage[kind]} px-4 pt-5 pb-4 flex flex-col items-center gap-3`}
       >
@@ -108,11 +108,11 @@ export function Scene({
 /** Frog: pops on a right answer, tilts and shows an ear bubble after a miss. Emoji is a placeholder for art. */
 function Frog({ s }: { s: SceneState }) {
   return (
-    <div className="relative h-28 flex items-end justify-center">
+    <div className="relative h-[clamp(64px,12dvh,112px)] flex items-end justify-center">
       <span
         key={s.n}
         aria-hidden
-        className={`text-[88px] leading-none inline-block ${s.reaction === "ok" ? "animate-pop" : s.reaction === "miss" ? "-rotate-6 animate-wiggle" : "animate-float"}`}
+        className={`text-[clamp(56px,10dvh,88px)] leading-none inline-block ${s.reaction === "ok" ? "animate-pop" : s.reaction === "miss" ? "-rotate-6 animate-wiggle" : "animate-float"}`}
       >
         🐸
       </span>
