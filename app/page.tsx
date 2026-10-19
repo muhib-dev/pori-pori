@@ -25,6 +25,8 @@ export default function Home() {
   const [ready, setReady] = useState(false);
   const [picking, setPicking] = useState(false);
   const [justFinished, setJustFinished] = useState(false); // install sheet only after a completed lesson
+  // Phone opened via the desktop QR (?install=1): remember it across the placement redirect so InstallSheet can offer install.
+  useEffect(() => { try { if (new URLSearchParams(location.search).get('install') === '1') sessionStorage.setItem('pp-install', '1'); } catch { /* private mode */ } }, []);
   useEffect(() => { try { if (sessionStorage.getItem('pp-lesson-done')) { setJustFinished(true); sessionStorage.removeItem('pp-lesson-done'); } } catch { /* private mode */ } }, []);
   useEffect(() => { getOrCreateProfile().then(() => setReady(true)); }, []);
   // A child who has not done "Show me!" yet (and has no saved progress from before it existed) goes there first.

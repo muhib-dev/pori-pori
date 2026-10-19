@@ -27,7 +27,8 @@ export function SiteQr({ size = 176 }: { size?: number }) {
   useEffect(() => {
     const u = siteUrl();
     setUrl(u);
-    QRCode.toDataURL(u, { margin: 1, width: size * 2, color: { dark: '#2B2340', light: '#FFFFFF' } }).then(setSrc).catch(() => {});
+    // ?install=1 tells the phone's home page to offer "add to home screen" right away
+    QRCode.toDataURL(`${u}${u.includes('?') ? '&' : '?'}install=1`, { margin: 1, width: size * 2, color: { dark: '#2B2340', light: '#FFFFFF' } }).then(setSrc).catch(() => {});
   }, [size]);
   const local = /localhost|127\.0\.0\.1/.test(url);
   return (
@@ -70,6 +71,7 @@ export function InstallHelp({ onAdd, showQr }: { onAdd?: () => void; showQr?: bo
       {(platform === 'desktop' || showQr) && (
         <div className="flex flex-col items-center gap-2">
           <span className="text-lg font-semibold">{platform === 'desktop' ? '📱 Scan with a phone to open it' : '📱 Open on another phone'}</span>
+          <p className="text-base text-center max-w-xs opacity-80">Scan with your phone to open Pori Pori, then tap “Add to Home Screen” to install it.</p>
           <SiteQr />
         </div>
       )}

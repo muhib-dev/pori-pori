@@ -1,33 +1,115 @@
-@import '@fontsource-variable/fredoka';
-@import '@fontsource/andika';
-@import '@fontsource/noto-sans-bengali/600.css';
-@import '@fontsource/noto-sans-bengali/700.css';
-@import '@fontsource/noto-sans-bengali/800.css';
+@import "@fontsource-variable/fredoka";
+@import "@fontsource/andika";
+@import "@fontsource/noto-sans-bengali/600.css";
+@import "@fontsource/noto-sans-bengali/700.css";
+@import "@fontsource/noto-sans-bengali/800.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Themes: space-separated RGB so Tailwind can add alpha. Add a theme here + lib/themes.ts.
    paper = page background, card = tile/card surface, ground = map/ground backdrop. */
-:root, [data-theme="sunny"] { --c-ink: 43 35 64; --c-paper: 255 246 227; --c-card: 255 255 255; --c-ground: 214 240 190; --c-sky: 86 191 245; --c-sun: 255 201 60; --c-tangerine: 255 139 61; --c-grass: 92 196 106; --c-berry: 155 93 229; --c-bubblegum: 255 111 174; }
-[data-theme="ocean"] { --c-ink: 18 58 82; --c-paper: 228 245 255; --c-card: 255 255 255; --c-ground: 189 231 248; --c-sky: 58 168 240; --c-sun: 255 214 90; --c-tangerine: 255 148 104; --c-grass: 44 196 165; --c-berry: 123 131 245; --c-bubblegum: 255 127 182; }
-[data-theme="candy"] { --c-ink: 72 30 62; --c-paper: 255 240 247; --c-card: 255 255 255; --c-ground: 255 211 232; --c-sky: 120 190 245; --c-sun: 255 222 89; --c-tangerine: 255 150 100; --c-grass: 110 207 160; --c-berry: 170 100 255; --c-bubblegum: 255 90 170; }
-[data-theme="forest"] { --c-ink: 28 52 36; --c-paper: 243 250 233; --c-card: 255 255 255; --c-ground: 201 232 178; --c-sky: 100 190 230; --c-sun: 255 214 70; --c-tangerine: 240 140 60; --c-grass: 60 170 90; --c-berry: 110 120 230; --c-bubblegum: 240 110 150; }
-[data-theme="sunset"] { --c-ink: 70 34 28; --c-paper: 255 241 227; --c-card: 255 255 255; --c-ground: 255 210 168; --c-sky: 90 180 235; --c-sun: 255 205 60; --c-tangerine: 255 120 60; --c-grass: 110 190 110; --c-berry: 150 90 220; --c-bubblegum: 255 90 120; }
-[data-theme="grape"] { --c-ink: 44 33 96; --c-paper: 242 237 255; --c-card: 255 255 255; --c-ground: 221 212 255; --c-sky: 143 179 255; --c-sun: 255 207 74; --c-tangerine: 255 154 98; --c-grass: 73 209 160; --c-berry: 165 139 255; --c-bubblegum: 255 133 204; }
+:root,
+[data-theme="sunny"] {
+  --c-ink: 43 35 64;
+  --c-paper: 255 246 227;
+  --c-card: 255 255 255;
+  --c-ground: 214 240 190;
+  --c-sky: 86 191 245;
+  --c-sun: 255 201 60;
+  --c-tangerine: 255 139 61;
+  --c-grass: 92 196 106;
+  --c-berry: 155 93 229;
+  --c-bubblegum: 255 111 174;
+}
+[data-theme="ocean"] {
+  --c-ink: 18 58 82;
+  --c-paper: 228 245 255;
+  --c-card: 255 255 255;
+  --c-ground: 189 231 248;
+  --c-sky: 58 168 240;
+  --c-sun: 255 214 90;
+  --c-tangerine: 255 148 104;
+  --c-grass: 44 196 165;
+  --c-berry: 123 131 245;
+  --c-bubblegum: 255 127 182;
+}
+[data-theme="candy"] {
+  --c-ink: 72 30 62;
+  --c-paper: 255 240 247;
+  --c-card: 255 255 255;
+  --c-ground: 255 211 232;
+  --c-sky: 120 190 245;
+  --c-sun: 255 222 89;
+  --c-tangerine: 255 150 100;
+  --c-grass: 110 207 160;
+  --c-berry: 170 100 255;
+  --c-bubblegum: 255 90 170;
+}
+[data-theme="forest"] {
+  --c-ink: 28 52 36;
+  --c-paper: 243 250 233;
+  --c-card: 255 255 255;
+  --c-ground: 201 232 178;
+  --c-sky: 100 190 230;
+  --c-sun: 255 214 70;
+  --c-tangerine: 240 140 60;
+  --c-grass: 60 170 90;
+  --c-berry: 110 120 230;
+  --c-bubblegum: 240 110 150;
+}
+[data-theme="sunset"] {
+  --c-ink: 70 34 28;
+  --c-paper: 255 241 227;
+  --c-card: 255 255 255;
+  --c-ground: 255 210 168;
+  --c-sky: 90 180 235;
+  --c-sun: 255 205 60;
+  --c-tangerine: 255 120 60;
+  --c-grass: 110 190 110;
+  --c-berry: 150 90 220;
+  --c-bubblegum: 255 90 120;
+}
+[data-theme="grape"] {
+  --c-ink: 44 33 96;
+  --c-paper: 242 237 255;
+  --c-card: 255 255 255;
+  --c-ground: 221 212 255;
+  --c-sky: 143 179 255;
+  --c-sun: 255 207 74;
+  --c-tangerine: 255 154 98;
+  --c-grass: 73 209 160;
+  --c-berry: 165 139 255;
+  --c-bubblegum: 255 133 204;
+}
 
 :root {
   color-scheme: light; /* kids app stays bright in both system modes */
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
-html, body { height: 100%; }
+html,
+body {
+  height: 100%;
+}
 body {
   @apply bg-paper text-ink font-ui antialiased select-none;
   background-image:
-    radial-gradient(circle at 15% 10%, rgb(var(--c-card) / .7) 0 80px, transparent 81px),
-    radial-gradient(circle at 85% 25%, rgb(var(--c-card) / .6) 0 60px, transparent 61px),
-    radial-gradient(circle at 70% 85%, rgb(var(--c-card) / .6) 0 90px, transparent 91px);
+    radial-gradient(
+      circle at 15% 10%,
+      rgb(var(--c-card) / 0.7) 0 80px,
+      transparent 81px
+    ),
+    radial-gradient(
+      circle at 85% 25%,
+      rgb(var(--c-card) / 0.6) 0 60px,
+      transparent 61px
+    ),
+    radial-gradient(
+      circle at 70% 85%,
+      rgb(var(--c-card) / 0.6) 0 90px,
+      transparent 91px
+    );
   background-attachment: fixed;
   padding-top: var(--safe-top);
   padding-bottom: var(--safe-bottom);
@@ -37,32 +119,277 @@ body {
 }
 
 /* The one memorable element: a sticker tile that presses flat (squash: 90ms down, 140ms spring back) */
-@keyframes mbob { 0%,100% { transform: translateY(0) rotate(var(--mt,0deg)) } 50% { transform: translateY(-6%) rotate(var(--mt,0deg)) } }
-@keyframes mdance { 0%,100% { transform: rotate(-8deg) } 50% { transform: rotate(8deg) translateY(-6%) } }
-@keyframes mzz { 0% { opacity: 0; transform: translate(0,0) } 50% { opacity: 1 } 100% { opacity: 0; transform: translate(30%,-60%) } }
+@keyframes mbob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--mt, 0deg));
+  }
+  50% {
+    transform: translateY(-6%) rotate(var(--mt, 0deg));
+  }
+}
+@keyframes mdance {
+  0%,
+  100% {
+    transform: rotate(-8deg);
+  }
+  50% {
+    transform: rotate(8deg) translateY(-6%);
+  }
+}
+@keyframes mzz {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(30%, -60%);
+  }
+}
 
 @layer components {
-.tile {
-  @apply bg-card border-4 border-ink rounded-tile shadow-tile;
-  transition: transform 140ms cubic-bezier(.3,1.6,.5,1), box-shadow 140ms ease-out;
-}
-.tile:active, .tile.is-pressed { transform: translateY(4px) scaleY(.94); box-shadow: 0 2px 0 0 rgb(var(--c-ink)); transition-duration: 90ms; transition-timing-function: ease-out; }
-.tile:focus-visible { outline: 4px solid rgb(var(--c-berry)); outline-offset: 4px; }
-.tile:disabled { opacity: .55; }
-.tile[aria-disabled='true'] { opacity: .55; pointer-events: none; }
-.tile.is-rest { opacity: .35; }
-.tile.is-lift { transform: translateY(-10px) rotate(-5deg) scale(1.06); box-shadow: 0 16px 0 0 rgb(var(--c-ink) / .3); }
-.tile.is-slot { @apply bg-transparent shadow-none; border-style: dashed; border-color: rgb(var(--c-ink) / .4); }
+  .tile {
+    @apply bg-card border-4 border-ink rounded-tile shadow-tile;
+    transition:
+      transform 140ms cubic-bezier(0.3, 1.6, 0.5, 1),
+      box-shadow 140ms ease-out;
+  }
+  .tile:active,
+  .tile.is-pressed {
+    transform: translateY(4px) scaleY(0.94);
+    box-shadow: 0 2px 0 0 rgb(var(--c-ink));
+    transition-duration: 90ms;
+    transition-timing-function: ease-out;
+  }
+  .tile:focus-visible {
+    outline: 4px solid rgb(var(--c-berry));
+    outline-offset: 4px;
+  }
+  .tile:disabled {
+    opacity: 0.55;
+  }
+  .tile[aria-disabled="true"] {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .tile.is-rest {
+    opacity: 0.35;
+  }
+  .tile.is-lift {
+    transform: translateY(-10px) rotate(-5deg) scale(1.06);
+    box-shadow: 0 16px 0 0 rgb(var(--c-ink) / 0.3);
+  }
+  .tile.is-slot {
+    @apply bg-transparent shadow-none;
+    border-style: dashed;
+    border-color: rgb(var(--c-ink) / 0.4);
+  }
 
-.tile-sm { @apply bg-card border-4 border-ink rounded-2xl shadow-tileSm; transition: transform 140ms cubic-bezier(.3,1.6,.5,1), box-shadow 140ms ease-out; }
-.tile-sm:active { transform: translateY(3px) scaleY(.94); box-shadow: 0 1px 0 0 rgb(var(--c-ink)); transition-duration: 90ms; }
-.tile:not(:disabled):hover, .tile-sm:hover { filter: brightness(1.05); }
+  .tile-sm {
+    @apply bg-card border-4 border-ink rounded-2xl shadow-tileSm;
+    transition:
+      transform 140ms cubic-bezier(0.3, 1.6, 0.5, 1),
+      box-shadow 140ms ease-out;
+  }
+  .tile-sm:active {
+    transform: translateY(3px) scaleY(0.94);
+    box-shadow: 0 1px 0 0 rgb(var(--c-ink));
+    transition-duration: 90ms;
+  }
+  .tile:not(:disabled):hover,
+  .tile-sm:hover {
+    filter: brightness(1.05);
+  }
 }
 
 /* Reduced motion (OS setting or in-app toggle <html data-reduced-motion>): every effect becomes a 200ms fade; sounds unchanged. */
 @media (prefers-reduced-motion: reduce) {
-  @keyframes mbob { from { opacity: 0 } to { opacity: 1 } } @keyframes mdance { from { opacity: 0 } to { opacity: 1 } } @keyframes mzz { from { opacity: 0 } to { opacity: 1 } }
-  @keyframes pop { from { opacity: 0 } to { opacity: 1 } } @keyframes bounceIn { from { opacity: 0 } to { opacity: 1 } } @keyframes wiggle { from { opacity: 0 } to { opacity: 1 } } @keyframes wobble { from { opacity: 0 } to { opacity: 1 } } @keyframes shake { from { opacity: 0 } to { opacity: 1 } } @keyframes float { from { opacity: 0 } to { opacity: 1 } } @keyframes pulseSoft { from { opacity: 0 } to { opacity: 1 } } @keyframes ring { from { opacity: 0 } to { opacity: 1 } } @keyframes twinkle { from { opacity: 0 } to { opacity: 1 } } @keyframes starIn { from { opacity: 0 } to { opacity: 1 } } @keyframes drift { from { opacity: 0 } to { opacity: 1 } } @keyframes confetti { from { opacity: 0 } to { opacity: 1 } } @keyframes burst { from { opacity: 0 } to { opacity: 1 } } @keyframes wave { from { opacity: 0 } to { opacity: 1 } } @keyframes squash { from { opacity: 0 } to { opacity: 1 } } @keyframes ripple { from { opacity: 0 } to { opacity: 1 } } @keyframes flip { from { opacity: 0 } to { opacity: 1 } } @keyframes fly { from { opacity: 0 } to { opacity: 1 } } 
-  *, *::before, *::after { animation-duration: 200ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: 200ms !important; }
+  @keyframes mbob {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes mdance {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes mzz {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes pop {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes bounceIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes wiggle {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes wobble {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes shake {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes float {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes pulseSoft {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes ring {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes twinkle {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes starIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes drift {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes confetti {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes burst {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes wave {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes squash {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes ripple {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes flip {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes fly {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 200ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: 200ms !important;
+  }
 }
-[data-reduced-motion] *, [data-reduced-motion] *::before, [data-reduced-motion] *::after { animation-duration: 200ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: 200ms !important; }
+[data-reduced-motion] *,
+[data-reduced-motion] *::before,
+[data-reduced-motion] *::after {
+  animation-duration: 200ms !important;
+  animation-iteration-count: 1 !important;
+  animation-delay: 0s !important;
+  transition-duration: 200ms !important;
+}
