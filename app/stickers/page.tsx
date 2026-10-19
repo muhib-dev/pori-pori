@@ -28,7 +28,7 @@ export default function Stickers() {
   const hat = equippedHat(profile.wardrobe?.equipped, totalStars);
 
   const tabCls = (on: boolean) =>
-    `w-24 h-[72px] rounded-t-tile border-4 border-b-0 border-ink flex items-center justify-center ${on ? "bg-card" : "bg-sun/60"}`;
+    `w-24 h-[72px] rounded-t-tile border-4 border-b-0 border-ink flex items-center justify-center ${on ? "bg-sun" : "bg-card/60"}`;
   return (
     <div className="flex flex-col gap-4 pb-8 w-full max-w-xl mx-auto">
       <TopBar backHref="/">
