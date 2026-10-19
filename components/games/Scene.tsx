@@ -68,11 +68,13 @@ export function Scene({
   kind,
   s,
   stage: top,
+  compact,
   children,
 }: {
   kind: SceneKind;
   s: SceneState;
   stage?: ReactNode;
+  compact?: boolean; // drop the frog and pond so the choices fit above the fold
   children: ReactNode;
 }) {
   return (
@@ -83,9 +85,9 @@ export function Scene({
         <span className="absolute -top-8 -right-2 z-10">
           <Mascot size={72} mood={moodOf(s.reaction)} />
         </span>
-        {kind === "pond" && <Frog s={s} />}
+        {kind === "pond" && !compact && <Frog s={s} />}
         {top}
-        {kind === "pond" && (
+        {kind === "pond" && !compact && (
           <span
             aria-hidden
             className="w-60 h-8 rounded-[50%] bg-sky border-4 border-ink -mt-2"

@@ -94,7 +94,7 @@ const FIRST = {
   g2: [W('cat','🐱'), W('car','🚗'), W('hat','🎩'), W('hen','🐔'), W('dog','🐶'), W('door','🚪'), W('bed','🛏️'), W('ball','⚽'), W('fish','🐟'), W('fan','🪭')],
 };
 const RHYMES = {
-  r1: [RH('cat','🐱','at'), RH('hat','🎩','at'), RH('bat','🦇','at'), RH('pen','🖊️','en'), RH('hen','🐔','en'), RH('ten','🔟','en')],
+  r1: [RH('cat','🐱','at'), RH('hat','🎩','at'), RH('bat','🦇','at'), RH('pen','🖊️','en'), RH('hen','🐔','en'), RH('men','👬','en')],
   r2: [RH('pig','🐷','ig'), RH('wig','👩‍🦱','ig'), RH('twig','🌿','ig'), RH('dog','🐶','og'), RH('log','🪵','og'), RH('frog','🐸','og')],
   r3: [RH('sun','☀️','un'), RH('bun','🍞','un'), RH('nut','🥜','ut'), RH('hut','🛖','ut'), RH('cake','🎂','ake'), RH('snake','🐍','ake'), RH('boat','⛵','oat'), RH('goat','🐐','oat')],
 };

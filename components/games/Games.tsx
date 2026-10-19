@@ -730,6 +730,7 @@ export function Rhyme(props: GameProps) {
     <Scene
       kind="pond"
       s={s}
+      compact
       stage={
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-center gap-1">
