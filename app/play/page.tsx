@@ -22,9 +22,14 @@ import { equippedHat } from "@/lib/content/wardrobe";
 import { Mascot } from "@/components/Mascot";
 import { Game, Story } from "@/components/games/Games";
 
+// Keyed by lesson so "Next" (same route, new query) resets finished/index/misses state.
 function PlayInner() {
-  const router = useRouter();
   const lessonId = useSearchParams().get("lesson") ?? "";
+  return <PlayLesson key={lessonId} lessonId={lessonId} />;
+}
+
+function PlayLesson({ lessonId }: { lessonId: string }) {
+  const router = useRouter();
   const lesson = findLesson(lessonId);
   const level = levelOfLesson(lessonId);
   const [seed, setSeed] = useState(0);
