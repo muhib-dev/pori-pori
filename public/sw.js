@@ -1,6 +1,6 @@
 // Offline-first service worker. Pages: network-first with cache fallback.
 // Static assets (/_next/static, fonts, icons, audio): cache-first.
-const VERSION = "rf-v8";
+const VERSION = "rf-v0";
 const SHELL = [
   "/",
   "/level/",
@@ -56,7 +56,9 @@ self.addEventListener("fetch", (e) => {
             .then(
               (r) =>
                 r ||
-                (req.mode === "navigate" ? caches.match("/") : Response.error()),
+                (req.mode === "navigate"
+                  ? caches.match("/")
+                  : Response.error()),
             ),
         ),
     );

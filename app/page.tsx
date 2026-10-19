@@ -2,7 +2,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { BookHeart, Dumbbell, Flame, Lock } from "lucide-react";
 import {
   db,
@@ -20,6 +19,7 @@ import { PlayCarousel } from "@/components/PlayCarousel";
 import { AvatarPicker } from "@/components/AvatarPicker";
 import { OfflinePill } from "@/components/OfflinePill";
 import { InstallSheet } from "@/components/InstallSheet";
+import { GrownupsGate } from "@/components/GrownupsGate";
 import { equippedHat } from "@/lib/content/wardrobe";
 
 export default function Home() {
@@ -32,6 +32,7 @@ export default function Home() {
   const reduced = useReducedMotion();
   const [ready, setReady] = useState(false);
   const [picking, setPicking] = useState(false);
+  const [gateOpen, setGateOpen] = useState(false);
   const [justFinished, setJustFinished] = useState(false); // install sheet only after a completed lesson
   // Phone opened via the desktop QR (?install=1): remember it so InstallSheet can offer install once it is ready.
   useEffect(() => {
@@ -130,7 +131,8 @@ export default function Home() {
       <div className="shrink-0 text-center pb-1">
         <DevCredit />
       </div>
-      <GrownupsLock />
+      <GrownupsLock onOpen={() => setGateOpen(true)} />
+      {gateOpen && <GrownupsGate onClose={() => setGateOpen(false)} />}
       <InstallSheet
         eligible={justFinished}
         lastShown={profile.installPromptLastShown}
@@ -145,15 +147,16 @@ export default function Home() {
   );
 }
 
-/** Grown-ups lock: intentionally small (52px) and low contrast so children do not wander in. */
-function GrownupsLock() {
+/** Grown-ups lock: intentionally small (52px) and low contrast so children do not wander in. Opens the sum modal. */
+function GrownupsLock({ onOpen }: { onOpen: () => void }) {
   return (
-    <Link
-      href="/grownups/"
+    <button
+      type="button"
+      onClick={onOpen}
       aria-label="Grown-ups area"
       className="fixed right-4 bottom-[calc(var(--safe-bottom)+0.75rem)] z-30 w-[52px] h-[52px] rounded-full border-[3px] border-ink/30 bg-card/60 flex items-center justify-center text-ink/40"
     >
       <Lock className="w-6 h-6" strokeWidth={2.5} />
-    </Link>
+    </button>
   );
 }
