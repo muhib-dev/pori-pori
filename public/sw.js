@@ -1,6 +1,6 @@
 // Offline-first service worker. Pages: network-first with cache fallback.
 // Static assets (/_next/static, fonts, icons, audio): cache-first.
-const VERSION = "rf-v6";
+const VERSION = "rf-v7";
 const SHELL = [
   "/",
   "/level/",
@@ -39,7 +39,8 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   if (url.origin !== location.origin) return;
 
-  if (req.mode === "navigate") {
+  // Network-first for pages and Next chunks (dev chunks have unhashed names, so cache-first served stale code).
+  if (req.mode === "navigate" || url.pathname.startsWith("/_next/")) {
     e.respondWith(
       fetch(req)
         .then((res) => {
@@ -50,7 +51,11 @@ self.addEventListener("fetch", (e) => {
         .catch(() =>
           caches
             .match(url.pathname, { ignoreSearch: true })
-            .then((r) => r || caches.match("/")),
+            .then(
+              (r) =>
+                r ||
+                (req.mode === "navigate" ? caches.match("/") : Response.error()),
+            ),
         ),
     );
     return;
