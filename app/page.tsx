@@ -16,7 +16,7 @@ import { pickLesson } from "@/lib/content/games";
 import { RoundButton } from "@/components/ui";
 import { BrandHeader, DevCredit } from "@/components/BrandHeader";
 import { PlayCarousel } from "@/components/PlayCarousel";
-import { SubjectSwitcher } from "@/components/SubjectSwitcher";
+import { SubjectBadge, SubjectSheet } from "@/components/SubjectSwitcher";
 import { AvatarPicker } from "@/components/AvatarPicker";
 import { OfflinePill } from "@/components/OfflinePill";
 import { InstallSheet } from "@/components/InstallSheet";
@@ -33,6 +33,7 @@ export default function Home() {
   const reduced = useReducedMotion();
   const [ready, setReady] = useState(false);
   const [picking, setPicking] = useState(false);
+  const [subjects, setSubjects] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
   const [justFinished, setJustFinished] = useState(false); // install sheet only after a completed lesson
   // Phone opened via the desktop QR (?install=1): remember it so InstallSheet can offer install once it is ready.
@@ -86,7 +87,10 @@ export default function Home() {
         >
           <span aria-hidden>{profile.avatar}</span>
         </RoundButton>
-        <BrandHeader />
+        <BrandHeader
+          onClick={() => setSubjects(true)}
+          badge={<SubjectBadge subject={subject} />}
+        />
         <RoundButton
           href="/stickers/"
           ariaLabel="Sticker book"
@@ -96,12 +100,7 @@ export default function Home() {
         </RoundButton>
       </header>
 
-      <SubjectSwitcher
-        active={subject.id}
-        onPick={(s) => updateProfile({ activeSubject: s.id })}
-      />
-
-      <div className="shrink-0 flex items-center gap-3 min-h-9">
+      <div className="shrink-0 flex items-center justify-center gap-3 min-h-9">
         <OfflinePill />
         {streak > 0 && (
           <span
@@ -147,6 +146,13 @@ export default function Home() {
         eligible={justFinished}
         lastShown={profile.installPromptLastShown}
       />
+      {subjects && (
+        <SubjectSheet
+          active={subject.id}
+          onPick={(s) => updateProfile({ activeSubject: s.id })}
+          onClose={() => setSubjects(false)}
+        />
+      )}
       {picking && (
         <AvatarPicker
           current={profile.avatar}
