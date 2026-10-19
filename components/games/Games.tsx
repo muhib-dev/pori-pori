@@ -732,7 +732,10 @@ export function Rhyme(props: GameProps) {
       s={s}
       stage={
         <div className="flex items-center gap-4">
-          <PicCard emoji={q.target.emoji} onTap={say} />
+          <div className="flex flex-col items-center gap-1">
+            <PicCard emoji={q.target.emoji} onTap={say} />
+            <span className="font-read text-2xl">{q.target.text}</span>
+          </div>
           <Speaker onSpeak={say} size="lg" pulse />
         </div>
       }
@@ -743,7 +746,12 @@ export function Rhyme(props: GameProps) {
         answer={q.answer}
         onResult={onResult}
         big
-        render={(it) => <span className="text-7xl">{it.emoji}</span>}
+        render={(it) => (
+          <span className="flex flex-col items-center gap-1">
+            <span className="text-7xl leading-none">{it.emoji}</span>
+            <span className="font-read text-xl">{it.text}</span>
+          </span>
+        )}
       />
     </Scene>
   );

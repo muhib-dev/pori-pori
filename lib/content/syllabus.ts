@@ -95,7 +95,7 @@ const FIRST = {
 };
 const RHYMES = {
   r1: [RH('cat','🐱','at'), RH('hat','🎩','at'), RH('bat','🦇','at'), RH('pen','🖊️','en'), RH('hen','🐔','en'), RH('ten','🔟','en')],
-  r2: [RH('pig','🐷','ig'), RH('wig','👩‍🦱','ig'), RH('fig','🍈','ig'), RH('dog','🐶','og'), RH('log','🪵','og'), RH('frog','🐸','og')],
+  r2: [RH('pig','🐷','ig'), RH('wig','👩‍🦱','ig'), RH('twig','🌿','ig'), RH('dog','🐶','og'), RH('log','🪵','og'), RH('frog','🐸','og')],
   r3: [RH('sun','☀️','un'), RH('bun','🍞','un'), RH('nut','🥜','ut'), RH('hut','🛖','ut'), RH('cake','🎂','ake'), RH('snake','🐍','ake'), RH('boat','⛵','oat'), RH('goat','🐐','oat')],
 };
 
