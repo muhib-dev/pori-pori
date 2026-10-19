@@ -21,6 +21,8 @@ export interface Profile {
   lastPlayedDay?: string; // local YYYY-MM-DD of the last finished lesson
   wardrobe?: { equipped: string }; // Bulbul's hat id (lib/content/wardrobe.ts); owned items are derived from total stars, never spent
   reducedMotion?: boolean; // in-app switch: every effect becomes a 200ms fade
+  activeSubject?: string; // subject id shown on home (lib/content/subjects.ts); undefined = reading
+  startSteps?: Record<string, number>; // per-subject start step for subjects other than reading (reading keeps startStep)
   homeIndex?: number;    // last-viewed home carousel card (a start position only, never a lock)
   installPromptLastShown?: number; // ms; the install sheet shows at most once a week
   createdAt: number;

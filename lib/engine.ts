@@ -4,6 +4,8 @@ import {
   type Lesson,
   type ReaderMode,
 } from "./content/syllabus";
+import { shuffle } from "./shuffle";
+import { buildMathQuestions, isMathGame } from "./mathEngine";
 
 export interface Question {
   kind: Lesson["game"];
@@ -13,7 +15,11 @@ export interface Question {
   letters?: string[]; // for build-word: shuffled letters incl. 1–2 distractors
   words?: string[]; // order-words: shuffled words · word-hunt: the sentence's words in order
   focus?: string; // fill-blank: the hidden word · word-hunt: the word to find
-  chunks?: string[]; // syllable-tap: shuffled chunks incl. one distractor (letters is for build-word)
+  chunks?: string[]; // syllable-tap: shuffled chunks incl. one distractor (letters is for build-word) · num-seq: shuffled numerals
+  count?: number; // count-tap: how many objects to show
+  a?: number; // add-pics / sub-pics: the two numbers
+  b?: number;
+  seq?: string[]; // missing-num: the whole row; `focus` is the numeral that is hidden
 }
 
 const STOP_WORDS = new Set([
@@ -31,14 +37,7 @@ const STOP_WORDS = new Set([
 ]);
 const bare = (w: string) => w.replace(/[.!?,"”]/g, "");
 
-export const shuffle = <T>(arr: T[]): T[] => {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-};
+export { shuffle };
 
 const pickDistractors = (pool: Item[], target: Item, n: number) =>
   shuffle(pool.filter((i) => i.text !== target.text)).slice(0, n);
@@ -51,6 +50,7 @@ export function buildQuestions(
   mode?: ReaderMode,
   rounds = lesson.rounds ?? (mode === "listen" ? 5 : 6),
 ): Question[] {
+  if (isMathGame(lesson.game)) return buildMathQuestions(lesson, mode, rounds);
   const pool = lesson.items;
   // Cycle through items so every play covers the whole set before repeating.
   const targets = shuffle(pool);

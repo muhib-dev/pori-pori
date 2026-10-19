@@ -24,7 +24,16 @@ export type GameType =
   | 'blend-tap'     // hear separate sounds, blend them, tap the picture (blending)
   | 'fill-blank'    // sentence with a hole, tap the missing word        (reading in context)
   | 'syllable-tap'  // tap the word chunks in order (sun-flower)         (long words)
-  | 'word-hunt';    // hear a word, find it inside a sentence            (fluency)
+  | 'word-hunt'     // hear a word, find it inside a sentence            (fluency)
+  // --- Maths (lib/content/subjects/maths.ts, components/games/MathGames.tsx)
+  | 'count-tap'     // tap each object to count it, then tap the numeral
+  | 'num-group'     // see a numeral, tap the group with that many
+  | 'hear-num'      // hear a number, tap the numeral
+  | 'compare'       // which group has more / fewer
+  | 'add-pics'      // two groups join, tap the total
+  | 'sub-pics'      // some fly away, tap how many are left
+  | 'num-seq'       // tap the numbers in order
+  | 'missing-num';  // a number is missing from the row
 
 export interface Item {
   text: string;      // what is read (letter, word or sentence)
@@ -401,11 +410,12 @@ export interface ProgressLike { lessonId: string; bestStars: number }
 const starsOf = (p: ProgressLike[], id: string) => p.find((x) => x.lessonId === id)?.bestStars ?? 0;
 export const isLessonDone = (p: ProgressLike[], lessonId: string) => starsOf(p, lessonId) >= 1;
 export const isStepDone = (p: ProgressLike[], step: Level, start = 1) => step.id < start || step.lessons.every((l) => isLessonDone(p, l.id));
-export const currentStepId = (p: ProgressLike[], start = 1) => (LEVELS.find((s) => !isStepDone(p, s, start)) ?? LEVELS[LEVELS.length - 1]).id;
-export const isStepUnlocked = (p: ProgressLike[], id: number, start = 1) => id <= currentStepId(p, start);
-export const isLessonUnlocked = (p: ProgressLike[], lessonId: string, start = 1) => {
-  const step = levelOfLesson(lessonId);
-  if (!step || !isStepUnlocked(p, step.id, start)) return false;
+// `levels` defaults to the reading trail; other subjects pass their own.
+export const currentStepId = (p: ProgressLike[], start = 1, levels: Level[] = LEVELS) => (levels.find((s) => !isStepDone(p, s, start)) ?? levels[levels.length - 1]).id;
+export const isStepUnlocked = (p: ProgressLike[], id: number, start = 1, levels: Level[] = LEVELS) => id <= currentStepId(p, start, levels);
+export const isLessonUnlocked = (p: ProgressLike[], lessonId: string, start = 1, levels: Level[] = LEVELS) => {
+  const step = levels.find((lv) => lv.lessons.some((l) => l.id === lessonId));
+  if (!step || !isStepUnlocked(p, step.id, start, levels)) return false;
   if (step.id < start) return true;
   const i = step.lessons.findIndex((l) => l.id === lessonId);
   return i === 0 || isLessonDone(p, step.lessons[i - 1].id);

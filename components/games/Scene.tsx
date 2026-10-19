@@ -8,7 +8,10 @@ import {
 } from "react";
 import { Mascot, type Mood } from "../Mascot";
 
-export type SceneKind = "pond" | "house" | "train" | "meadow";
+export type SceneKind =
+  | "pond" | "house" | "train" | "meadow"
+  // Number Land (maths)
+  | "shop" | "farm" | "zoo" | "bakery" | "island" | "rocket";
 type Reaction = "idle" | "ok" | "miss";
 
 export interface SceneState {
@@ -61,6 +64,17 @@ const stage: Record<SceneKind, string> = {
   house: "bg-ground",
   train: "bg-sky/20",
   meadow: "bg-ground/70",
+  shop: "bg-sun/25",
+  farm: "bg-grass/25",
+  zoo: "bg-tangerine/20",
+  bakery: "bg-bubblegum/25",
+  island: "bg-sky/25",
+  rocket: "bg-berry/20",
+};
+
+// Little backdrop landmark in the corner of the Number Land scenes.
+const decor: Partial<Record<SceneKind, string>> = {
+  shop: "🏪", farm: "🚜", zoo: "🦒", bakery: "🥐", island: "🏝️", rocket: "🚀",
 };
 
 /** Story-skin frame shared by every game: a stage card with a theme backdrop, Bulbul in the corner, then the controls underneath. */
@@ -85,6 +99,11 @@ export function Scene({
         <span className="absolute -top-8 -right-2 z-10">
           <Mascot size={72} mood={moodOf(s.reaction)} />
         </span>
+        {decor[kind] && (
+          <span aria-hidden className="absolute -top-6 left-2 z-10 text-5xl">
+            {decor[kind]}
+          </span>
+        )}
         {kind === "pond" && !compact && <Frog s={s} />}
         {top}
         {kind === "pond" && !compact && (

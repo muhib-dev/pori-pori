@@ -61,7 +61,7 @@ function PicCard({
 }
 
 // -------- shared choice grid: 2–4 big tiles. Right = grass + check + pop, wrong = wiggle and retry, 2nd miss = glow hint ---
-function Choices({
+export function Choices({
   options,
   answer,
   render,
@@ -144,7 +144,7 @@ function Choices({
 }
 
 /** Wires the shared per-question bits every tap game needs */
-function useTap(
+export function useTap(
   q: Question,
   say: () => void,
   props: GameProps,

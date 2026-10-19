@@ -1,6 +1,6 @@
 // Offline-first service worker. Pages: network-first with cache fallback.
 // Static assets (/_next/static, fonts, icons, audio): cache-first.
-const VERSION = "rf-v0";
+const VERSION = "rf-v1";
 const SHELL = [
   "/",
   "/level/",

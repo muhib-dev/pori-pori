@@ -5,6 +5,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { ArrowLeft, ChevronRight, FileDown, Lock, Settings, Smartphone, Star, TrendingUp, User, Volume2 } from 'lucide-react';
 import { db, PROFILE_ID, updateProfile, resetAll, getOrCreateProfile } from '@/lib/db';
 import { LEVELS, currentStepId } from '@/lib/content/syllabus';
+import { SUBJECTS } from '@/lib/content/subjects';
 import { THEMES, applyTheme, DEFAULT_THEME } from '@/lib/themes';
 import { applyReducedMotion } from '@/lib/motion';
 import { AVATARS } from '@/components/AvatarPicker';
@@ -146,9 +147,9 @@ export default function Grownups() {
           )}
           <section className={card}>
             <h2 className="font-ui font-semibold text-lg">Steps</h2>
-            {LEVELS.map((lv) => (
-              <details key={lv.id} className="border-t border-[#E2DED5] pt-2">
-                <summary className="cursor-pointer text-[15px] py-1">{lv.emoji} {lv.id}. {lv.name}</summary>
+            {SUBJECTS.flatMap((sub) => sub.levels.map((lv) => ({ sub, lv }))).map(({ sub, lv }) => (
+              <details key={`${sub.id}-${lv.id}`} className="border-t border-[#E2DED5] pt-2">
+                <summary className="cursor-pointer text-[15px] py-1">{sub.id === 'reading' ? '' : `${sub.emoji} `}{lv.emoji} {lv.id}. {lv.name}</summary>
                 <ul className="pl-2 pt-2 flex flex-col gap-1">
                   {lv.lessons.map((l) => {
                     const p = progress.find((x) => x.lessonId === l.id);

@@ -1,4 +1,5 @@
-import { LEVELS, type GameType, type Lesson } from './syllabus';
+import { LEVELS, type GameType, type Lesson, type Level } from './syllabus';
+import { MATHS_LEVELS } from './subjects/maths';
 import type { LessonProgress } from '../db';
 
 export interface HomeGame {
@@ -8,7 +9,10 @@ export interface HomeGame {
   color: 'sun' | 'tangerine' | 'grass' | 'berry' | 'bubblegum' | 'sky';
   types: GameType[];  // lesson game types this card plays
   isNew?: boolean;
+  subject?: 'reading' | 'maths'; // default reading
 }
+
+const LEVELS_OF: Record<'reading' | 'maths', Level[]> = { reading: LEVELS, maths: MATHS_LEVELS };
 
 /** Free-play carousel cards, in default order. Together they cover every GameType. */
 export const HOME_GAMES: HomeGame[] = [
@@ -21,10 +25,22 @@ export const HOME_GAMES: HomeGame[] = [
   { id: 'rhymes', name: 'Rhymes', emoji: '🎵', color: 'sky', types: ['rhyme'] },
 ];
 
-export const lessonsOf = (g: HomeGame): Lesson[] =>
-  LEVELS.flatMap((l) => l.lessons).filter((les) => g.types.includes(les.game));
+/** Free-play cards for Maths ("Number Land"); lessons in lib/content/subjects/maths.ts. */
+export const MATHS_GAMES: HomeGame[] = [
+  { id: 'count', name: 'Count', emoji: '🍎', color: 'sun', types: ['count-tap', 'num-group'], subject: 'maths' },
+  { id: 'hear-num', name: 'Listen', emoji: '👂', color: 'tangerine', types: ['hear-num'], subject: 'maths' },
+  { id: 'bigger', name: 'Bigger', emoji: '🐘', color: 'grass', types: ['compare'], subject: 'maths' },
+  { id: 'plus', name: 'Add', emoji: '🧁', color: 'bubblegum', types: ['add-pics'], subject: 'maths' },
+  { id: 'minus', name: 'Fly away', emoji: '🐦', color: 'sky', types: ['sub-pics'], subject: 'maths' },
+  { id: 'order', name: 'In order', emoji: '🪜', color: 'berry', types: ['num-seq'], subject: 'maths' },
+  { id: 'missing', name: 'Missing', emoji: '🧩', color: 'sun', types: ['missing-num'], subject: 'maths' },
+];
 
-export const gameOfLesson = (lesson: Lesson): HomeGame | undefined => HOME_GAMES.find((g) => g.types.includes(lesson.game));
+export const lessonsOf = (g: HomeGame): Lesson[] =>
+  LEVELS_OF[g.subject ?? 'reading'].flatMap((l) => l.lessons).filter((les) => g.types.includes(les.game));
+
+export const gameOfLesson = (lesson: Lesson): HomeGame | undefined =>
+  [...HOME_GAMES, ...MATHS_GAMES].find((g) => g.types.includes(lesson.game));
 
 const starsFor = (progress: LessonProgress[], id: string) => progress.find((p) => p.lessonId === id)?.bestStars ?? 0;
 

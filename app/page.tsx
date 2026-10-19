@@ -11,11 +11,12 @@ import {
   updateProfile,
 } from "@/lib/db";
 import { useReducedMotion } from "@/lib/motion";
-import { findLesson } from "@/lib/content/syllabus";
-import { HOME_GAMES, pickLesson } from "@/lib/content/games";
+import { activeSubjectOf, findAnyLesson } from "@/lib/content/subjects";
+import { pickLesson } from "@/lib/content/games";
 import { RoundButton } from "@/components/ui";
 import { BrandHeader, DevCredit } from "@/components/BrandHeader";
 import { PlayCarousel } from "@/components/PlayCarousel";
+import { SubjectSwitcher } from "@/components/SubjectSwitcher";
 import { AvatarPicker } from "@/components/AvatarPicker";
 import { OfflinePill } from "@/components/OfflinePill";
 import { InstallSheet } from "@/components/InstallSheet";
@@ -70,7 +71,8 @@ export default function Home() {
   const practiceId = Object.entries(missesByLesson)
     .filter(([id, n]) => n > 0)
     .sort((a, b) => b[1] - a[1])[0]?.[0];
-  const practice = practiceId ? findLesson(practiceId) : undefined;
+  const practice = practiceId ? findAnyLesson(practiceId) : undefined;
+  const subject = activeSubjectOf(profile);
 
   return (
     // Body already pads the safe areas, so subtract them: the whole home screen always fits the visible viewport.
@@ -93,6 +95,11 @@ export default function Home() {
           <BookHeart className="w-9 h-9" strokeWidth={2.5} />
         </RoundButton>
       </header>
+
+      <SubjectSwitcher
+        active={subject.id}
+        onPick={(s) => updateProfile({ activeSubject: s.id })}
+      />
 
       <div className="shrink-0 flex items-center gap-3 min-h-9">
         <OfflinePill />
@@ -117,12 +124,15 @@ export default function Home() {
       </div>
 
       <PlayCarousel
-        games={HOME_GAMES}
+        key={subject.id}
+        games={subject.games}
         progress={progress}
-        startIndex={profile.homeIndex ?? 0}
+        startIndex={subject.id === "reading" ? (profile.homeIndex ?? 0) : 0}
         hat={equippedHat(profile.wardrobe?.equipped, totalStars)}
         reduced={reduced}
-        onIndexChange={(i) => updateProfile({ homeIndex: i })}
+        onIndexChange={(i) => {
+          if (subject.id === "reading") updateProfile({ homeIndex: i });
+        }}
         onPlay={(g) => {
           const l = pickLesson(g, progress);
           if (l) router.push(`/play/?lesson=${l.id}`);

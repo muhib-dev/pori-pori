@@ -10,9 +10,11 @@ import {
 import { useSearchParams, useRouter } from "next/navigation";
 import { useLiveQuery } from "dexie-react-hooks";
 import { ArrowRight, BookHeart, Home, Plus, RotateCcw } from "lucide-react";
-import { findLesson, isStepDone, levelOfLesson } from "@/lib/content/syllabus";
+import { isStepDone } from "@/lib/content/syllabus";
+import { findAnyLesson, levelOfAnyLesson, startFor, subjectOfLesson } from "@/lib/content/subjects";
 import { gameOfLesson, pickLesson } from "@/lib/content/games";
 import { buildQuestions, starsFor, shuffle } from "@/lib/engine";
+import { isMathGame } from "@/lib/mathEngine";
 import { db, PROFILE_ID, recordAttempt } from "@/lib/db";
 import { pushPending } from "@/lib/sync";
 import { speak, stopSpeaking } from "@/lib/speech";
@@ -21,6 +23,7 @@ import { Celebration, Confetti } from "@/components/Feedback";
 import { equippedHat } from "@/lib/content/wardrobe";
 import { Mascot } from "@/components/Mascot";
 import { Game, Story } from "@/components/games/Games";
+import { MathGame } from "@/components/games/MathGames";
 
 // Keyed by lesson so "Next" (same route, new query) resets finished/index/misses state.
 function PlayInner() {
@@ -30,8 +33,8 @@ function PlayInner() {
 
 function PlayLesson({ lessonId }: { lessonId: string }) {
   const router = useRouter();
-  const lesson = findLesson(lessonId);
-  const level = levelOfLesson(lessonId);
+  const lesson = findAnyLesson(lessonId);
+  const level = levelOfAnyLesson(lessonId);
   const [seed, setSeed] = useState(0);
   const [vh, setVh] = useState(800); // viewport height, to scale the results mascot on short screens
   useEffect(() => {
@@ -57,7 +60,7 @@ function PlayLesson({ lessonId }: { lessonId: string }) {
 
   // Unknown lessons typed into the URL go home.
   const progress = useLiveQuery(() => db.progress.toArray());
-  const start = profile?.startStep ?? 1;
+  const start = startFor(profile, subjectOfLesson(lessonId)?.id ?? "reading");
   const allowed = !!lesson && !!progress && !!profile && true; // free play: every lesson is open
   useEffect(() => {
     if (progress && profile && !allowed) router.replace("/");
@@ -262,6 +265,13 @@ function PlayLesson({ lessonId }: { lessonId: string }) {
       <section className="flex-1 flex flex-col justify-center py-[clamp(4px,2dvh,24px)]" key={key}>
         {lesson.game === "story" ? (
           <Story story={stories[i]} onResult={onResult} mode={mode} />
+        ) : isMathGame(lesson.game) ? (
+          <MathGame
+            q={q}
+            onResult={onResult}
+            mode={mode}
+            onMiss={() => setMissed(true)}
+          />
         ) : (
           <Game
             q={q}

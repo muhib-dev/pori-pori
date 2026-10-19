@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { ChevronLeft, ChevronRight, Lock, Shirt, Star } from "lucide-react";
 import { db, PROFILE_ID, updateProfile } from "@/lib/db";
-import { ALL_LESSONS } from "@/lib/content/syllabus";
+import { ALL_SUBJECT_LESSONS as ALL_LESSONS } from "@/lib/content/subjects";
 import { WARDROBE, equippedHat, isOwned } from "@/lib/content/wardrobe";
 import { speak } from "@/lib/speech";
 import { Mascot } from "@/components/Mascot";
