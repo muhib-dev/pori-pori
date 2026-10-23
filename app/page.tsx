@@ -2,7 +2,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BookHeart, Dumbbell, Flame, Lock } from "lucide-react";
+import { BookHeart, BookOpen, Dumbbell, Flame, Lock } from "lucide-react";
 import {
   db,
   getOrCreateProfile,
@@ -102,6 +102,9 @@ export default function Home() {
 
       <div className="shrink-0 flex items-center justify-center gap-3 min-h-9">
         <OfflinePill />
+        <RoundButton href="/story/" ariaLabel="Bengali stories" color="berry">
+          <BookOpen className="w-9 h-9" strokeWidth={2.5} />
+        </RoundButton>
         {streak > 0 && (
           <span
             className="flex items-center gap-1 bg-card border-[3px] border-ink rounded-full px-4 py-0.5 text-2xl font-semibold shadow-tileSm"

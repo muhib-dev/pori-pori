@@ -3,13 +3,19 @@ import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { ChevronLeft, ChevronRight, Lock, Shirt, Star } from "lucide-react";
 import { db, PROFILE_ID, updateProfile } from "@/lib/db";
-import { ALL_SUBJECT_LESSONS as ALL_LESSONS } from "@/lib/content/subjects";
+import { ALL_SUBJECT_LESSONS } from "@/lib/content/subjects";
+import { BN_STORIES, bnLessonId } from "@/lib/content/stories-bn";
 import { WARDROBE, equippedHat, isOwned } from "@/lib/content/wardrobe";
 import { speak } from "@/lib/speech";
 import { Mascot } from "@/components/Mascot";
 import { RoundButton, StickerCard, TopBar } from "@/components/ui";
 
 const PER_PAGE = 9; // ring-binder page: 3 x 3
+// Lessons plus the Bengali stories (/story/), which earn stickers under "bn-<id>".
+const ALL_LESSONS = [
+  ...ALL_SUBJECT_LESSONS.map(({ id, title, emoji }) => ({ id, title, emoji })),
+  ...BN_STORIES.map((s) => ({ id: bnLessonId(s.id), title: s.titleEn, emoji: s.emoji })),
+];
 const DAY = 24 * 3600 * 1000;
 
 // Sticker book (one sticker per lesson, earned on the first 3 stars) + Bulbul's wardrobe (unlocked by total stars, never spent).
